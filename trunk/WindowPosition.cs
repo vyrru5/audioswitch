@@ -183,6 +183,12 @@ namespace AudioSwitch
                     num2 = flag ? iconRect.Top - windowheight - 8 : tBarInf.Position.Top - windowheight - 8;
                     break;
             }
+
+            if (windowwidth + num > Screen.PrimaryScreen.WorkingArea.Width)
+                num = Screen.PrimaryScreen.WorkingArea.Width - windowwidth;
+            else if (num < 0)
+                num = 0;
+
             return new Point(num, num2);
         }
     }
