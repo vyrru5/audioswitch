@@ -1,4 +1,4 @@
-/*
+﻿/*
   LICENSE
   -------
   Copyright (C) 2007-2010 Ray Molenkamp
@@ -21,24 +21,21 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
 
-namespace AudioSwitch.CoreAudioApi
+namespace AudioSwitch.CoreAudioApi.Interfaces
 {
-    public class AudioVolumeNotificationData
+    [Guid("87CE5498-68D6-44E5-9215-6DA47EF883D8"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface ISimpleAudioVolume
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
-
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
-        {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
-        }
+        [PreserveSig]
+        int SetMasterVolume(  float fLevel,ref Guid EventContext);
+        [PreserveSig]
+        int GetMasterVolume( out float pfLevel);
+        [PreserveSig]
+        int SetMute( bool bMute, ref Guid EventContext) ;
+        [PreserveSig]
+        int GetMute( out bool bMute);
     }
 }

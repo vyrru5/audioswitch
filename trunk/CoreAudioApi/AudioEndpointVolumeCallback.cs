@@ -63,7 +63,7 @@ namespace AudioSwitch.CoreAudioApi
             }
 
             //Create combined structure and Fire Event in parent class.
-            var NotificationData = new AudioVolumeNotificationData(data.fMasterVolume);
+            var NotificationData = new AudioVolumeNotificationData(data.guidEventContext, data.bMuted, data.fMasterVolume, voldata);
             _Parent.FireNotification(NotificationData);
             return 0; //S_OK
         }

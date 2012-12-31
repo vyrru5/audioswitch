@@ -22,23 +22,31 @@
 
 using System;
 
-namespace AudioSwitch.CoreAudioApi
+namespace AudioSwitch.CoreAudioApi.Interfaces
 {
-    public class AudioVolumeNotificationData
+    internal struct AUDIO_VOLUME_NOTIFICATION_DATA
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
+        public Guid   guidEventContext;
+        public bool   bMuted;
+        public float  fMasterVolume;
+        public uint   nChannels;
+        public float ChannelVolume;
 
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
+        //Code Should Compile at warning level4 without any warnings, 
+        //However this struct will give us Warning CS0649: Field [Fieldname] 
+        //is never assigned to, and will always have its default value
+        //You can disable CS0649 in the project options but that will disable
+        //the warning for the whole project, it's a nice warning and we do want 
+        //it in other places so we make a nice dummy function to keep the compiler
+        //happy.
+        private void FixCS0649()
         {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
+            guidEventContext = Guid.Empty;
+            bMuted = false;
+            fMasterVolume = 0;
+            nChannels = 0;
+            ChannelVolume = 0;
         }
+
     }
 }

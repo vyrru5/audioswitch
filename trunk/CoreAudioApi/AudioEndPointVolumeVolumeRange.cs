@@ -20,25 +20,44 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
+using System.Runtime.InteropServices;
+using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
 {
-    public class AudioVolumeNotificationData
+    public class AudioEndPointVolumeVolumeRange
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
+        readonly float _VolumeMindB;
+        readonly float _VolumeMaxdB;
+        readonly float _VolumeIncrementdB;
 
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
+        internal AudioEndPointVolumeVolumeRange(IAudioEndpointVolume parent)
         {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
+            Marshal.ThrowExceptionForHR(parent.GetVolumeRange(out _VolumeMindB,out _VolumeMaxdB,out _VolumeIncrementdB));
+        }
+
+        public float MindB
+        {
+            get
+            {
+                return _VolumeMindB;
+            }
+        }
+
+        public float MaxdB
+        {
+            get
+            {
+                return _VolumeMaxdB;
+            }
+        }
+
+        public float IncrementdB
+        {
+            get
+            {
+                return _VolumeIncrementdB;
+            }
         }
     }
 }

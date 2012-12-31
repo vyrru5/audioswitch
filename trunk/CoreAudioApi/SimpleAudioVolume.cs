@@ -1,4 +1,4 @@
-/*
+﻿/*
   LICENSE
   -------
   Copyright (C) 2007-2010 Ray Molenkamp
@@ -20,58 +20,48 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Runtime.InteropServices;
 using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
 {
-    public class AudioMeterInformation
+    public class SimpleAudioVolume
     {
-        private readonly IAudioMeterInformation _AudioMeterInformation;
-        private readonly EEndpointHardwareSupport _HardwareSupport;
-        private readonly AudioMeterInformationChannels _Channels;
-
-        internal AudioMeterInformation(IAudioMeterInformation realInterface)
+        readonly ISimpleAudioVolume _SimpleAudioVolume;
+        internal SimpleAudioVolume(ISimpleAudioVolume realSimpleVolume)
         {
-            int HardwareSupp;
-
-            _AudioMeterInformation = realInterface;
-            Marshal.ThrowExceptionForHR(_AudioMeterInformation.QueryHardwareSupport(out HardwareSupp));
-            _HardwareSupport = (EEndpointHardwareSupport)HardwareSupp;
-            _Channels = new AudioMeterInformationChannels(_AudioMeterInformation);
-
+            _SimpleAudioVolume = realSimpleVolume;
         }
 
-        public AudioMeterInformationChannels PeakValues
+        public float MasterVolume
         {
             get
             {
-                return _Channels;
+                float ret;
+                Marshal.ThrowExceptionForHR(_SimpleAudioVolume.GetMasterVolume(out ret));
+                return ret;
+            }
+            set
+            {
+                Guid Empty = Guid.Empty;
+                Marshal.ThrowExceptionForHR(_SimpleAudioVolume.SetMasterVolume(value, ref Empty));
             }
         }
 
-        public EEndpointHardwareSupport HardwareSupport
+        public bool Mute
         {
             get
             {
-                return _HardwareSupport;
+                bool ret;
+                Marshal.ThrowExceptionForHR(_SimpleAudioVolume.GetMute(out ret));
+                return ret;
             }
-        }
-
-        public float MasterPeakValue
-        {
-            get
+            set
             {
-                float result;
-                Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetPeakValue(out result));
-                return result;
+                Guid Empty = Guid.Empty;
+                Marshal.ThrowExceptionForHR(_SimpleAudioVolume.SetMute(value, ref Empty));
             }
         }
-
-       
-
-      
-
-
     }
 }

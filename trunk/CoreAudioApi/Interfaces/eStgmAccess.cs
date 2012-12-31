@@ -20,25 +20,12 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
-
-namespace AudioSwitch.CoreAudioApi
+namespace AudioSwitch.CoreAudioApi.Interfaces
 {
-    public class AudioVolumeNotificationData
+    internal enum EStgmAccess
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
-
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
-        {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
-        }
+        STGM_READ      = 0x00000000,
+        STGM_WRITE     = 0x00000001,
+        STGM_READWRITE = 0x00000002
     }
 }

@@ -24,21 +24,11 @@ using System;
 
 namespace AudioSwitch.CoreAudioApi
 {
-    public class AudioVolumeNotificationData
+    [Flags]
+    public enum EEndpointHardwareSupport
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
-
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
-        {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
-        }
+        Volume = 0x00000001,
+        Mute   = 0x00000002,
+        Meter  = 0x00000004
     }
 }

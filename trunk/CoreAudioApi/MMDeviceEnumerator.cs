@@ -51,6 +51,13 @@ namespace AudioSwitch.CoreAudioApi
             return new MMDevice(_Device);
         }
 
+        public MMDevice GetDevice(string ID)
+        {
+            IMMDevice _Device;
+            Marshal.ThrowExceptionForHR(_realEnumerator.GetDevice(ID, out _Device));
+            return new MMDevice(_Device);
+        }
+
         public MMDeviceEnumerator()
         {
             if (Environment.OSVersion.Version.Major < 6)

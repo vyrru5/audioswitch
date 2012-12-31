@@ -1,4 +1,4 @@
-/*
+﻿/*
   LICENSE
   -------
   Copyright (C) 2007-2010 Ray Molenkamp
@@ -20,25 +20,37 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
+using System.Runtime.InteropServices;
+using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
 {
-    public class AudioVolumeNotificationData
+    public class SessionCollection
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
-
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
+        readonly IAudioSessionEnumerator _AudioSessionEnumerator;
+        internal SessionCollection(IAudioSessionEnumerator realEnumerator)
         {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
+            _AudioSessionEnumerator = realEnumerator;
+        }
+
+        public AudioSessionControl this[int index]
+        {
+            get
+            {
+                IAudioSessionControl2 _Result;
+                Marshal.ThrowExceptionForHR(_AudioSessionEnumerator.GetSession(index, out _Result));
+                return new AudioSessionControl(_Result);
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                int result;
+                Marshal.ThrowExceptionForHR(_AudioSessionEnumerator.GetCount(out result));
+                return (int)result;
+            }
         }
     }
 }

@@ -33,6 +33,27 @@ namespace AudioSwitch.CoreAudioApi
         private AudioEndpointVolumeCallback _CallBack;
         public  event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
 
+        public AudioEndPointVolumeVolumeRange VolumeRange { get; private set; }
+
+        public EEndpointHardwareSupport HardwareSupport { get; private set; }
+
+        public AudioEndpointVolumeStepInformation StepInformation { get; private set; }
+
+        public AudioEndpointVolumeChannels Channels { get; private set; }
+
+        public float MasterVolumeLevel
+        {
+            get
+            {
+                float result;
+                Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMasterVolumeLevel(out result));
+                return result;
+            }
+            set
+            {
+                Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty));
+            }
+        }
         public float MasterVolumeLevelScalar
         {
             get
@@ -59,13 +80,24 @@ namespace AudioSwitch.CoreAudioApi
                 Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMute(value, Guid.Empty));
             }
         }
-
+        public void VolumeStepUp()
+        {
+            Marshal.ThrowExceptionForHR(_AudioEndPointVolume.VolumeStepUp(Guid.Empty));
+        }
+        public void VolumeStepDown()
+        {
+            Marshal.ThrowExceptionForHR(_AudioEndPointVolume.VolumeStepDown(Guid.Empty));
+        }
         internal AudioEndpointVolume(IAudioEndpointVolume realEndpointVolume)
         {
             uint HardwareSupp;
 
             _AudioEndPointVolume = realEndpointVolume;
+            Channels = new AudioEndpointVolumeChannels(_AudioEndPointVolume);
+            StepInformation = new AudioEndpointVolumeStepInformation(_AudioEndPointVolume);
             Marshal.ThrowExceptionForHR(_AudioEndPointVolume.QueryHardwareSupport(out HardwareSupp));
+            HardwareSupport = (EEndpointHardwareSupport)HardwareSupp;
+            VolumeRange = new AudioEndPointVolumeVolumeRange(_AudioEndPointVolume);
             _CallBack = new AudioEndpointVolumeCallback(this);
             Marshal.ThrowExceptionForHR(_AudioEndPointVolume.RegisterControlChangeNotify( _CallBack));
         }
@@ -77,6 +109,7 @@ namespace AudioSwitch.CoreAudioApi
                 del(NotificationData);
             }
         }
+        #region IDisposable Members
 
         public void Dispose()
         {
@@ -91,5 +124,8 @@ namespace AudioSwitch.CoreAudioApi
         {
             Dispose();
         }
+
+        #endregion
+       
     }
 }

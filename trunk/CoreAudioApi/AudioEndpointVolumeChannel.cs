@@ -20,58 +20,50 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Runtime.InteropServices;
 using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
 {
-    public class AudioMeterInformation
+    public class AudioEndpointVolumeChannel
     {
-        private readonly IAudioMeterInformation _AudioMeterInformation;
-        private readonly EEndpointHardwareSupport _HardwareSupport;
-        private readonly AudioMeterInformationChannels _Channels;
+        private readonly uint _Channel;
+        private readonly IAudioEndpointVolume _AudioEndpointVolume;
 
-        internal AudioMeterInformation(IAudioMeterInformation realInterface)
+        internal AudioEndpointVolumeChannel(IAudioEndpointVolume parent, int channel)
         {
-            int HardwareSupp;
-
-            _AudioMeterInformation = realInterface;
-            Marshal.ThrowExceptionForHR(_AudioMeterInformation.QueryHardwareSupport(out HardwareSupp));
-            _HardwareSupport = (EEndpointHardwareSupport)HardwareSupp;
-            _Channels = new AudioMeterInformationChannels(_AudioMeterInformation);
-
+            _Channel = (uint)channel;
+            _AudioEndpointVolume = parent;
         }
 
-        public AudioMeterInformationChannels PeakValues
-        {
-            get
-            {
-                return _Channels;
-            }
-        }
-
-        public EEndpointHardwareSupport HardwareSupport
-        {
-            get
-            {
-                return _HardwareSupport;
-            }
-        }
-
-        public float MasterPeakValue
+        public float VolumeLevel
         {
             get
             {
                 float result;
-                Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetPeakValue(out result));
+                Marshal.ThrowExceptionForHR(_AudioEndpointVolume.GetChannelVolumeLevel(_Channel,out result));
                 return result;
+            }
+            set
+            {
+                Marshal.ThrowExceptionForHR(_AudioEndpointVolume.SetChannelVolumeLevel(_Channel, value,Guid.Empty));
             }
         }
 
-       
-
-      
-
+        public float VolumeLevelScalar
+        {
+            get
+            {
+                float result;
+                Marshal.ThrowExceptionForHR(_AudioEndpointVolume.GetChannelVolumeLevelScalar(_Channel, out result));
+                return result;
+            }
+            set
+            {
+                Marshal.ThrowExceptionForHR(_AudioEndpointVolume.SetChannelVolumeLevelScalar(_Channel, value, Guid.Empty));
+            }
+        }
 
     }
 }

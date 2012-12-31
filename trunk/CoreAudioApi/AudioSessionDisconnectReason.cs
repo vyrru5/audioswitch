@@ -1,4 +1,4 @@
-/*
+﻿/*
   LICENSE
   -------
   Copyright (C) 2007-2010 Ray Molenkamp
@@ -19,26 +19,15 @@
      misrepresented as being the original source code.
   3. This notice may not be removed or altered from any source distribution.
 */
-
-using System;
-
 namespace AudioSwitch.CoreAudioApi
 {
-    public class AudioVolumeNotificationData
+    public enum AudioSessionDisconnectReason
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
-
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
-        {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
-        }
+        DisconnectReasonDeviceRemoval = 0,
+        DisconnectReasonServerShutdown = (DisconnectReasonDeviceRemoval + 1),
+        DisconnectReasonFormatChanged = (DisconnectReasonServerShutdown + 1),
+        DisconnectReasonSessionLogoff = (DisconnectReasonFormatChanged + 1),
+        DisconnectReasonSessionDisconnected = (DisconnectReasonSessionLogoff + 1),
+        DisconnectReasonExclusiveModeOverride = (DisconnectReasonSessionDisconnected + 1) 
     }
 }
