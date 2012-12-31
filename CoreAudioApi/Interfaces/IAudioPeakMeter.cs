@@ -1,4 +1,4 @@
-/*
+﻿/*
   LICENSE
   -------
   Copyright (C) 2007-2010 Ray Molenkamp
@@ -20,25 +20,15 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace AudioSwitch.CoreAudioApi
+namespace AudioSwitch.CoreAudioApi.Interfaces
 {
-    public class AudioVolumeNotificationData
+    [Guid("DD79923C-0599-45e0-B8B6-C8DF7DB6E796"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IAudioPeakMeter
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
-
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
-        {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
-        }
+         int GetChannelCount( out int pcChannels);
+         int GetLevel( int Channel, out float level);
     }
 }

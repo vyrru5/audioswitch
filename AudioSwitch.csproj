@@ -38,7 +38,7 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>SndVol.ico</ApplicationIcon>
+    <ApplicationIcon>appicon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>AudioSwitch.Program</StartupObject>
@@ -48,28 +48,111 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
-    <Compile Include="CoreAudioApi\AudioEndpointVolume.cs" />
-    <Compile Include="CoreAudioApi\AudioEndpointVolumeCallback.cs" />
+    <Compile Include="CoreAudioApi\AudioEndpointVolume.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\AudioEndpointVolumeCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\AudioEndpointVolumeChannel.cs" />
+    <Compile Include="CoreAudioApi\AudioEndpointVolumeChannels.cs" />
     <Compile Include="CoreAudioApi\AudioEndpointVolumeNotificationDelegate.cs" />
-    <Compile Include="CoreAudioApi\AudioMeterInformation.cs" />
-    <Compile Include="CoreAudioApi\AudioMeterInformationChannels.cs" />
-    <Compile Include="CoreAudioApi\AudioVolumeNotificationData.cs" />
-    <Compile Include="CoreAudioApi\EnumsAndStructs.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IAudioEndpointVolume.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IAudioEndpointVolumeCallback.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IAudioMeterInformation.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IMMDevice.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IMMDeviceCollection.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IMMDeviceEnumerator.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IPolicyConfigVista.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IPropertyStore.cs" />
-    <Compile Include="CoreAudioApi\MMDevice.cs" />
-    <Compile Include="CoreAudioApi\MMDeviceCollection.cs" />
-    <Compile Include="CoreAudioApi\MMDeviceEnumerator.cs" />
-    <Compile Include="CoreAudioApi\PolicyConfigVista.cs" />
-    <Compile Include="CoreAudioApi\PropertyStore.cs" />
-    <Compile Include="CoreAudioApi\PropertyStoreProperty.cs" />
-    <Compile Include="CoreAudioApi\PropVariant.cs" />
+    <Compile Include="CoreAudioApi\AudioEndpointVolumeStepInformation.cs" />
+    <Compile Include="CoreAudioApi\AudioEndPointVolumeVolumeRange.cs" />
+    <Compile Include="CoreAudioApi\AudioMeterInformation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\AudioMeterInformationChannels.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\AudioSessionControl.cs" />
+    <Compile Include="CoreAudioApi\AudioSessionDisconnectReason.cs" />
+    <Compile Include="CoreAudioApi\AudioSessionManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\AudioSessionState.cs" />
+    <Compile Include="CoreAudioApi\AudioVolumeNotificationData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\EDataFlow.cs" />
+    <Compile Include="CoreAudioApi\EDeviceState.cs" />
+    <Compile Include="CoreAudioApi\EEndpointHardwareSupport.cs" />
+    <Compile Include="CoreAudioApi\ERole.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\AUDIO_VOLUME_NOTIFICATION_DATA.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\Blob.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\CLSCTX.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\eStgmAccess.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\IAudioEndpointVolume.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IAudioEndpointVolumeCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IAudioMeterInformation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IAudioPeakMeter.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\IAudioSessionControl2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IAudioSessionEnumerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IAudioSessionEvents.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IAudioSessionManager2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IMMDevice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IMMDeviceCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IMMDeviceEnumerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IMMEndpoint.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\IPolicyConfig.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\IPolicyConfigVista.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IPropertyStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\ISimpleAudioVolume.cs" />
+    <Compile Include="CoreAudioApi\MMDevice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\MMDeviceCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\MMDeviceEnumerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\PKEY.cs" />
+    <Compile Include="CoreAudioApi\PolicyConfigClient.cs" />
+    <Compile Include="CoreAudioApi\PolicyConfigVista.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\PropertyKey.cs" />
+    <Compile Include="CoreAudioApi\PropertyStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\PropertyStoreProperty.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\PropVariant.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\SessionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\SimpleAudioVolume.cs" />
+    <Compile Include="CoreAudioApi\VolEventsHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="EndPointControl.cs" />
     <Compile Include="FormSwitcher.cs">
       <SubType>Form</SubType>
@@ -78,8 +161,16 @@
       <DependentUpon>FormSwitcher.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="VerticalProgressBar.cs">
-      <SubType>Component</SubType>
+    <Compile Include="ProgressTrackBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProgressTrackBar.designer.cs">
+      <DependentUpon>ProgressTrackBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="WindowPosition.cs" />
   </ItemGroup>
@@ -87,11 +178,21 @@
     <EmbeddedResource Include="FormSwitcher.resx">
       <DependentUpon>FormSwitcher.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ProgressTrackBar.resx">
+      <DependentUpon>ProgressTrackBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="SndVol.ico" />
+    <Content Include="appicon.ico" />
+    <None Include="states\mute.ico" />
+    <None Include="states\75-100.ico" />
+    <None Include="states\50-75.ico" />
+    <None Include="states\25-50.ico" />
+    <None Include="states\0-25.ico" />
   </ItemGroup>
 </Project>

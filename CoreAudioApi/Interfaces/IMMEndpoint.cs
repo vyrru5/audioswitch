@@ -20,25 +20,15 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
+using System.Runtime.InteropServices;
 
-namespace AudioSwitch.CoreAudioApi
+namespace AudioSwitch.CoreAudioApi.Interfaces
 {
-    public class AudioVolumeNotificationData
+    [Guid("1BE09788-6894-4089-8586-9A2A6C265AC5"),
+      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IMMEndpoint 
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
-
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
-        {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
-        }
-    }
+        [PreserveSig]
+        int GetDataFlow(out EDataFlow pDataFlow);
+    }; 
 }

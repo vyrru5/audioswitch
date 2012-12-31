@@ -32,7 +32,7 @@ namespace AudioSwitch.CoreAudioApi
     {
         private readonly IPropertyStore _Store;
 
-        private int Count
+        public int Count
         {
             get
             {
@@ -42,11 +42,22 @@ namespace AudioSwitch.CoreAudioApi
             }
         }
 
+        public PropertyStoreProperty this[int index]
+        {
+            get
+            {
+                PropVariant result;
+                PropertyKey key = Get(index);
+                Marshal.ThrowExceptionForHR(_Store.GetValue(ref key, out result));
+                return new PropertyStoreProperty(key, result);
+            }
+        }
+
         public bool Contains(PropertyKey compareKey)
         {
-            for (var i = 0; i < Count; i++)
+            for (int i = 0; i < Count; i++)
             {
-                var key = Get(i);
+                PropertyKey key = Get(i);
                 if (key.fmtid == compareKey.fmtid && key.pid == compareKey.pid)
                     return true;
             }
@@ -64,18 +75,26 @@ namespace AudioSwitch.CoreAudioApi
                     {
                         PropVariant result;
                         Marshal.ThrowExceptionForHR(_Store.GetValue(ref key, out result));
-                        return new PropertyStoreProperty(result);
+                        return new PropertyStoreProperty(key, result);
                     }
                 }
                 return null;
             }
         }
 
-        private PropertyKey Get(int index)
+        public PropertyKey Get(int index)
         {
             PropertyKey key;
             Marshal.ThrowExceptionForHR( _Store.GetAt(index, out key));
             return key;
+        }
+
+        public PropVariant GetValue(int index)
+        {
+            PropVariant result;
+            var key = Get(index);
+            Marshal.ThrowExceptionForHR(_Store.GetValue(ref key, out result));
+            return result;
         }
 
         internal PropertyStore(IPropertyStore store)

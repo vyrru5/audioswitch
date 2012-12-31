@@ -25,52 +25,39 @@ using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
 {
-    public class AudioMeterInformation
+    public class AudioEndpointVolumeChannels
     {
-        private readonly IAudioMeterInformation _AudioMeterInformation;
-        private readonly EEndpointHardwareSupport _HardwareSupport;
-        private readonly AudioMeterInformationChannels _Channels;
-
-        internal AudioMeterInformation(IAudioMeterInformation realInterface)
-        {
-            int HardwareSupp;
-
-            _AudioMeterInformation = realInterface;
-            Marshal.ThrowExceptionForHR(_AudioMeterInformation.QueryHardwareSupport(out HardwareSupp));
-            _HardwareSupport = (EEndpointHardwareSupport)HardwareSupp;
-            _Channels = new AudioMeterInformationChannels(_AudioMeterInformation);
-
-        }
-
-        public AudioMeterInformationChannels PeakValues
+        readonly IAudioEndpointVolume _AudioEndPointVolume;
+        readonly AudioEndpointVolumeChannel[] _Channels;
+        public int Count
         {
             get
             {
-                return _Channels;
-            }
-        }
-
-        public EEndpointHardwareSupport HardwareSupport
-        {
-            get
-            {
-                return _HardwareSupport;
-            }
-        }
-
-        public float MasterPeakValue
-        {
-            get
-            {
-                float result;
-                Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetPeakValue(out result));
+                int result;
+                Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetChannelCount(out result));
                 return result;
             }
         }
 
-       
+        public AudioEndpointVolumeChannel this[int index]
+        {
+            get
+            {
+                return _Channels[index];
+            }
+        }
 
-      
+        internal AudioEndpointVolumeChannels(IAudioEndpointVolume parent)
+        {
+            _AudioEndPointVolume = parent;
+
+            var ChannelCount = Count;
+            _Channels = new AudioEndpointVolumeChannel[ChannelCount];
+            for (var i = 0; i < ChannelCount; i++)
+            {
+                _Channels[i] = new AudioEndpointVolumeChannel(_AudioEndPointVolume, i);
+            }
+        }
 
 
     }

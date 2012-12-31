@@ -22,59 +22,8 @@
 
 using System;
 
-namespace AudioSwitch.CoreAudioApi
+namespace AudioSwitch.CoreAudioApi.Interfaces
 {
-    public static class PKEY
-    {
-        public static readonly PropertyKey PKEY_DeviceInterface_FriendlyName = new PropertyKey { fmtid = new Guid(0xa45c254e, 0xdf1c, 0x4efd, 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0), pid = 14 };
-    }
-
-    public struct PropertyKey
-    {
-        public Guid fmtid;
-        public int pid;
-    }
-
-    public enum ERole
-    {
-        eConsole = 0,
-        eMultimedia = 1,
-        eCommunications = 2,
-        ERole_enum_count = 3
-    }
-
-    [Flags]
-    public enum EDeviceState : uint
-    {
-        DEVICE_STATE_ACTIVE = 0x00000001,
-        DEVICE_STATE_UNPLUGGED = 0x00000002,
-        DEVICE_STATE_NOTPRESENT = 0x00000004,
-        DEVICE_STATEMASK_ALL = 0x00000007
-    }
-
-    public enum EDataFlow
-    {
-        eRender = 0,
-        eCapture = 1,
-        eAll = 2,
-        EDataFlow_enum_count = 3
-    }
-
-    internal struct AUDIO_VOLUME_NOTIFICATION_DATA
-    {
-        public Guid guidEventContext;
-        public bool bMuted;
-        public float fMasterVolume;
-        public uint nChannels;
-        public float ChannelVolume;
-    }
-
-    internal struct Blob
-    {
-        public int Length;
-        public IntPtr Data;
-    }
-
     [Flags]
     internal enum CLSCTX : uint
     {
@@ -99,12 +48,5 @@ namespace AudioSwitch.CoreAudioApi
         INPROC = INPROC_SERVER | INPROC_HANDLER,
         SERVER = INPROC_SERVER | LOCAL_SERVER | REMOTE_SERVER,
         ALL = SERVER | INPROC_HANDLER
-    }
-
-    internal enum EStgmAccess
-    {
-        STGM_READ = 0x00000000,
-        STGM_WRITE = 0x00000001,
-        STGM_READWRITE = 0x00000002
     }
 }

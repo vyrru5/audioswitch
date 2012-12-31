@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
 {

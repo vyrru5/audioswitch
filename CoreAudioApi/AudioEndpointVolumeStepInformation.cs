@@ -20,25 +20,35 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
+using System.Runtime.InteropServices;
+using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
 {
-    public class AudioVolumeNotificationData
+    public class AudioEndpointVolumeStepInformation
     {
-        public Guid EventContext { get; private set; }
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
-        public int Channels { get; private set; }
-        public float[] ChannelVolume { get; private set; }
-
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
+        private readonly uint _Step;
+        private readonly uint _StepCount;
+        internal AudioEndpointVolumeStepInformation(IAudioEndpointVolume parent)
         {
-            EventContext = eventContext;
-            Muted = muted;
-            MasterVolume = masterVolume;
-            Channels = channelVolume.Length;
-            ChannelVolume = channelVolume;
+            Marshal.ThrowExceptionForHR(parent.GetVolumeStepInfo(out _Step, out _StepCount));
         }
+
+        public uint Step
+        {
+            get
+            {
+                return _Step;
+            }
+        }
+
+        public uint StepCount
+        {
+            get
+            {
+                return _StepCount;
+            }
+        }
+
     }
 }
