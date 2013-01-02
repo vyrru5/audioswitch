@@ -22,6 +22,8 @@ namespace AudioSwitch
         private static MMDevice VolumeDevice;
         private static List<string> DeviceList = new List<string>();
         private static int CurrentDevice;
+        private byte lastL;
+        private byte lastR;
         
         public FormSwitcher()
         {
@@ -183,8 +185,19 @@ namespace AudioSwitch
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            tbMaster.SetLeftChannel((int)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[0] * 13));
-            tbMaster.SetRightChannel((int)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[1] * 13));
+            var newL = (byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[0] * 13);
+            var newR = (byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[1] * 13);
+
+            if (lastL != newL)
+            {
+                tbMaster.SetLeftChannel(newL);
+                lastL = newL;
+            }
+            if (lastR != newR)
+            {
+                tbMaster.SetRightChannel(newR);
+                lastR = newR;
+            }
         }
 
         private void tbMaster_TrackBarValueChanged(object sender, EventArgs eventArgs)

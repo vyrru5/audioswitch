@@ -18,9 +18,6 @@ namespace AudioSwitch
         private int _TrackBarValue;
         public bool Moving;
 
-        public int Maximum { get; set; }
-        public int Minimum { get; set; }
-
         public int Value
         {
             get
@@ -38,7 +35,6 @@ namespace AudioSwitch
         {
             InitializeComponent();
 
-            Maximum = 100;
             pgLeft = new[] { l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13 };
             pgRight = new[] { r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13 };
             pgOnColors = new[]
@@ -56,26 +52,22 @@ namespace AudioSwitch
                              };
         }
 
-        public void SetLeftChannel(int value)
+        public void SetLeftChannel(byte value)
         {
-            for (var i = 0; i < value; i++)
-                pgLeft[i].BackColor = pgOnColors[i];
-            for (var i = value; i < 13; i++)
-                pgLeft[i].BackColor = pgOffColors[i];
+            for (byte i = 0; i < 13; i++)
+                pgLeft[i].BackColor = value >= i ? pgOnColors[i] : pgOffColors[i];
         }
 
-        public void SetRightChannel(int value)
+        public void SetRightChannel(byte value)
         {
-            for (var i = 0; i < value; i++)
-                pgRight[i].BackColor = pgOnColors[i];
-            for (var i = value; i < 13; i++)
-                pgRight[i].BackColor = pgOffColors[i];
+            for (byte i = 0; i < 13; i++)
+                pgRight[i].BackColor = value >= i ? pgOnColors[i] : pgOffColors[i];
         }
 
         private void MoveThumb()
         {
             var trackDistance = ClientSize.Width - Beat.Width;
-            var fractionMoved = (float)(_TrackBarValue - Minimum) / (Maximum - Minimum);
+            var fractionMoved = (float)_TrackBarValue / 100;
             Beat.Left = (int)(fractionMoved * trackDistance);
         }
 
@@ -105,7 +97,7 @@ namespace AudioSwitch
 
                 Beat.Left = theFormPosition.X;
 
-                _TrackBarValue = Minimum + (int)(theFormPosition.X / (float)(ClientSize.Width - Beat.Width) * (Maximum - Minimum));
+                _TrackBarValue = (int)(theFormPosition.X / (float)(ClientSize.Width - Beat.Width) * 100);
                 if (TrackBarValueChanged != null)
                     TrackBarValueChanged(this, null);
             }
