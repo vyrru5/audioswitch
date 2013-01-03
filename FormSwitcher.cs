@@ -215,13 +215,13 @@ namespace AudioSwitch
         {
             if (VolumeDevice.AudioEndpointVolume.Mute)
                 notifyIcon1.Icon = Resources.mute;
-            else if (tbMaster.Value >= 0 && tbMaster.Value <= 25)
+            else if (tbMaster.Value == 0)
                 notifyIcon1.Icon = Resources._0_25;
-            else if (tbMaster.Value > 25 && tbMaster.Value < 50)
+            else if (tbMaster.Value > 0 && tbMaster.Value < 33)
                 notifyIcon1.Icon = Resources._25_50;
-            else if (tbMaster.Value > 50 && tbMaster.Value < 75)
+            else if (tbMaster.Value > 33 && tbMaster.Value < 66)
                 notifyIcon1.Icon = Resources._50_75;
-            else if (tbMaster.Value > 75 && tbMaster.Value <= 100)
+            else if (tbMaster.Value > 66 && tbMaster.Value <= 100)
                 notifyIcon1.Icon = Resources._75_100;
         }
     }
