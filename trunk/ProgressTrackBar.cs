@@ -13,10 +13,23 @@ namespace AudioSwitch
         private readonly Color[] pgOffColors;
 
         public EventHandler TrackBarValueChanged;
+        public EventHandler MuteChanged;
 
         private Point pMousePosition = Point.Empty;
         private int _TrackBarValue;
         public bool Moving;
+
+        private bool _mute;
+        public bool Mute
+        {
+            get { return _mute; }
+            set 
+            {
+                Beat.BackColor = value ? Color.Red : SystemColors.ControlDark;
+                _mute = value;
+                MuteChanged(this, EventArgs.Empty);
+            }
+        }
 
         public int Value
         {
@@ -35,32 +48,32 @@ namespace AudioSwitch
         {
             InitializeComponent();
 
-            pgLeft = new[] { l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13 };
-            pgRight = new[] { r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13 };
+            pgLeft = new[] { new Label(), l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13 };
+            pgRight = new[] { new Label(), r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13 };
             pgOnColors = new[]
                              {
+                                 Color.Black, Color.Lime, Color.Lime, Color.Lime, Color.Lime,
                                  Color.Lime, Color.Lime, Color.Lime, Color.Lime, Color.Lime,
-                                 Color.Lime, Color.Lime, Color.Lime, Color.Lime, Color.Yellow,
-                                 Color.Yellow, Color.Yellow, Color.Red
+                                 Color.Yellow, Color.Yellow, Color.Yellow, Color.Red
                              };
 
             pgOffColors = new[]
                              {
+                                 Color.Black, Color.Green, Color.Green, Color.Green, Color.Green,
                                  Color.Green, Color.Green, Color.Green, Color.Green, Color.Green,
-                                 Color.Green, Color.Green, Color.Green, Color.Green, Color.Olive,
-                                 Color.Olive, Color.Olive, Color.Maroon
+                                 Color.Olive, Color.Olive, Color.Olive, Color.Maroon
                              };
         }
 
         public void SetLeftChannel(byte value)
         {
-            for (byte i = 0; i < 13; i++)
+            for (byte i = 0; i < 14; i++)
                 pgLeft[i].BackColor = value >= i ? pgOnColors[i] : pgOffColors[i];
         }
 
         public void SetRightChannel(byte value)
         {
-            for (byte i = 0; i < 13; i++)
+            for (byte i = 0; i < 14; i++)
                 pgRight[i].BackColor = value >= i ? pgOnColors[i] : pgOffColors[i];
         }
 
@@ -73,8 +86,13 @@ namespace AudioSwitch
 
         private void btnThumb_MouseDown(object sender, MouseEventArgs e)
         {
-            pMousePosition = Beat.PointToClient(MousePosition);
-            Moving = true;
+            if (e.Button == MouseButtons.Left)
+            {
+                pMousePosition = Beat.PointToClient(MousePosition);
+                Moving = true;
+            }
+            else
+                Mute = !Mute;
         }
 
         private void btnThumb_MouseUp(object sender, MouseEventArgs e)
@@ -105,12 +123,61 @@ namespace AudioSwitch
 
         private void Dragger_MouseEnter(object sender, EventArgs e)
         {
-            Beat.BackColor = SystemColors.GrayText;
+            if (!Mute)
+                Beat.BackColor = SystemColors.GrayText;
         }
 
         private void Dragger_MouseLeave(object sender, EventArgs e)
         {
-            Beat.BackColor = SystemColors.ControlDark;
+            if (!Mute)
+                Beat.BackColor = SystemColors.ControlDark;
+        }
+        
+        private void lblGraph_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var theFormPosition = PointToClient(MousePosition);
+                theFormPosition.X -= Beat.Width/2;
+
+                if (theFormPosition.X > Width - Beat.Width)
+                    theFormPosition.X = Width - Beat.Width;
+
+                if (theFormPosition.X < 0)
+                    theFormPosition.X = 0;
+
+                Beat.Left = theFormPosition.X;
+
+                Moving = true;
+            }
+            else
+                Mute = !Mute;
+        }
+
+        private void lblGraph_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Moving && e.Button == MouseButtons.Left)
+            {
+                var theFormPosition = PointToClient(MousePosition);
+                theFormPosition.X -= Beat.Width / 2;
+
+                if (theFormPosition.X > Width - Beat.Width)
+                    theFormPosition.X = Width - Beat.Width;
+
+                if (theFormPosition.X < 0)
+                    theFormPosition.X = 0;
+
+                Beat.Left = theFormPosition.X;
+
+                _TrackBarValue = (int)(theFormPosition.X / (float)(ClientSize.Width - Beat.Width) * 100);
+                if (TrackBarValueChanged != null)
+                    TrackBarValueChanged(this, null);
+            }
+        }
+
+        private void lblGraph_MouseUp(object sender, MouseEventArgs e)
+        {
+            Moving = false;
         }
     }
 }

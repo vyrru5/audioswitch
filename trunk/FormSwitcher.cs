@@ -46,6 +46,8 @@ namespace AudioSwitch
             RefreshDevices();
             UpdateListView();
             UpdateVolControls();
+            tbMaster.MuteChanged += MuteChanged;
+            SetIcon();
         }
 
         private static void RefreshDevices()
@@ -153,11 +155,7 @@ namespace AudioSwitch
 
                 VolumeDevice = EndPointControl.pEnum.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia);
 
-                if (!VolumeDevice.AudioEndpointVolume.Mute)
-                    tbMaster.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
-                else
-                    tbMaster.Value = 0;
-                
+                tbMaster.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
                 VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
                 VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
                 timer1.Enabled = true;
@@ -172,9 +170,15 @@ namespace AudioSwitch
             else
             {
                 if (!tbMaster.Moving)
-                    tbMaster.Value = VolumeDevice.AudioEndpointVolume.Mute ? 0 : (int) (data.MasterVolume*100);
+                    tbMaster.Value = (int) (data.MasterVolume*100);
+                tbMaster.Mute = VolumeDevice.AudioEndpointVolume.Mute;
                 SetIcon();
             }
+        }
+
+        private void MuteChanged(object sender, EventArgs eventArgs)
+        {
+            VolumeDevice.AudioEndpointVolume.Mute = tbMaster.Mute;
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
@@ -185,8 +189,8 @@ namespace AudioSwitch
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            var newL = (byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[0] * 13);
-            var newR = (byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[1] * 13);
+            var newL = (byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[0] * 14);
+            var newR = (byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[1] * 14);
 
             if (lastL != newL)
             {
