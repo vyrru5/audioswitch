@@ -32,6 +32,9 @@ namespace AudioSwitch
             this.Beat = new System.Windows.Forms.Panel();
             this.Dragger = new System.Windows.Forms.PictureBox();
             this.panelLeft = new System.Windows.Forms.Panel();
+            this.l13 = new System.Windows.Forms.Label();
+            this.l12 = new System.Windows.Forms.Label();
+            this.l11 = new System.Windows.Forms.Label();
             this.l10 = new System.Windows.Forms.Label();
             this.l9 = new System.Windows.Forms.Label();
             this.l8 = new System.Windows.Forms.Label();
@@ -43,6 +46,9 @@ namespace AudioSwitch
             this.l2 = new System.Windows.Forms.Label();
             this.l1 = new System.Windows.Forms.Label();
             this.panelRight = new System.Windows.Forms.Panel();
+            this.r13 = new System.Windows.Forms.Label();
+            this.r12 = new System.Windows.Forms.Label();
+            this.r11 = new System.Windows.Forms.Label();
             this.r10 = new System.Windows.Forms.Label();
             this.r9 = new System.Windows.Forms.Label();
             this.r8 = new System.Windows.Forms.Label();
@@ -54,12 +60,6 @@ namespace AudioSwitch
             this.r2 = new System.Windows.Forms.Label();
             this.r1 = new System.Windows.Forms.Label();
             this.lblGraph = new System.Windows.Forms.Label();
-            this.l11 = new System.Windows.Forms.Label();
-            this.l12 = new System.Windows.Forms.Label();
-            this.l13 = new System.Windows.Forms.Label();
-            this.r11 = new System.Windows.Forms.Label();
-            this.r12 = new System.Windows.Forms.Label();
-            this.r13 = new System.Windows.Forms.Label();
             this.Beat.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Dragger)).BeginInit();
             this.panelLeft.SuspendLayout();
@@ -110,6 +110,30 @@ namespace AudioSwitch
             this.panelLeft.Name = "panelLeft";
             this.panelLeft.Size = new System.Drawing.Size(196, 5);
             this.panelLeft.TabIndex = 6;
+            // 
+            // l13
+            // 
+            this.l13.BackColor = System.Drawing.Color.Maroon;
+            this.l13.Location = new System.Drawing.Point(181, 1);
+            this.l13.Name = "l13";
+            this.l13.Size = new System.Drawing.Size(14, 3);
+            this.l13.TabIndex = 12;
+            // 
+            // l12
+            // 
+            this.l12.BackColor = System.Drawing.Color.Olive;
+            this.l12.Location = new System.Drawing.Point(166, 1);
+            this.l12.Name = "l12";
+            this.l12.Size = new System.Drawing.Size(14, 3);
+            this.l12.TabIndex = 11;
+            // 
+            // l11
+            // 
+            this.l11.BackColor = System.Drawing.Color.Olive;
+            this.l11.Location = new System.Drawing.Point(151, 1);
+            this.l11.Name = "l11";
+            this.l11.Size = new System.Drawing.Size(14, 3);
+            this.l11.TabIndex = 10;
             // 
             // l10
             // 
@@ -212,6 +236,30 @@ namespace AudioSwitch
             this.panelRight.Size = new System.Drawing.Size(196, 5);
             this.panelRight.TabIndex = 10;
             // 
+            // r13
+            // 
+            this.r13.BackColor = System.Drawing.Color.Maroon;
+            this.r13.Location = new System.Drawing.Point(181, 1);
+            this.r13.Name = "r13";
+            this.r13.Size = new System.Drawing.Size(14, 3);
+            this.r13.TabIndex = 12;
+            // 
+            // r12
+            // 
+            this.r12.BackColor = System.Drawing.Color.Olive;
+            this.r12.Location = new System.Drawing.Point(166, 1);
+            this.r12.Name = "r12";
+            this.r12.Size = new System.Drawing.Size(14, 3);
+            this.r12.TabIndex = 11;
+            // 
+            // r11
+            // 
+            this.r11.BackColor = System.Drawing.Color.Olive;
+            this.r11.Location = new System.Drawing.Point(151, 1);
+            this.r11.Name = "r11";
+            this.r11.Size = new System.Drawing.Size(14, 3);
+            this.r11.TabIndex = 10;
+            // 
             // r10
             // 
             this.r10.BackColor = System.Drawing.Color.Olive;
@@ -303,54 +351,9 @@ namespace AudioSwitch
             this.lblGraph.Text = " |       |       |       |       |       |       |       |       |       |       " +
     "|       |       |       |       |       |       |       |       |       |       " +
     "|       |       |       |       |";
-            // 
-            // l11
-            // 
-            this.l11.BackColor = System.Drawing.Color.Olive;
-            this.l11.Location = new System.Drawing.Point(151, 1);
-            this.l11.Name = "l11";
-            this.l11.Size = new System.Drawing.Size(14, 3);
-            this.l11.TabIndex = 10;
-            // 
-            // l12
-            // 
-            this.l12.BackColor = System.Drawing.Color.Olive;
-            this.l12.Location = new System.Drawing.Point(166, 1);
-            this.l12.Name = "l12";
-            this.l12.Size = new System.Drawing.Size(14, 3);
-            this.l12.TabIndex = 11;
-            // 
-            // l13
-            // 
-            this.l13.BackColor = System.Drawing.Color.Maroon;
-            this.l13.Location = new System.Drawing.Point(181, 1);
-            this.l13.Name = "l13";
-            this.l13.Size = new System.Drawing.Size(14, 3);
-            this.l13.TabIndex = 12;
-            // 
-            // r11
-            // 
-            this.r11.BackColor = System.Drawing.Color.Olive;
-            this.r11.Location = new System.Drawing.Point(151, 1);
-            this.r11.Name = "r11";
-            this.r11.Size = new System.Drawing.Size(14, 3);
-            this.r11.TabIndex = 10;
-            // 
-            // r12
-            // 
-            this.r12.BackColor = System.Drawing.Color.Olive;
-            this.r12.Location = new System.Drawing.Point(166, 1);
-            this.r12.Name = "r12";
-            this.r12.Size = new System.Drawing.Size(14, 3);
-            this.r12.TabIndex = 11;
-            // 
-            // r13
-            // 
-            this.r13.BackColor = System.Drawing.Color.Maroon;
-            this.r13.Location = new System.Drawing.Point(181, 1);
-            this.r13.Name = "r13";
-            this.r13.Size = new System.Drawing.Size(14, 3);
-            this.r13.TabIndex = 12;
+            this.lblGraph.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseDown);
+            this.lblGraph.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseMove);
+            this.lblGraph.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseUp);
             // 
             // ProgressTrackBar
             // 
