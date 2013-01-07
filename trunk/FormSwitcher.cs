@@ -22,6 +22,7 @@ namespace AudioSwitch
         private static MMDevice VolumeDevice;
         private static List<string> DeviceList = new List<string>();
         private static int CurrentDevice;
+        private static EDataFlow RenderType = EDataFlow.eRender;
         private byte lastL;
         private byte lastR;
         
@@ -43,18 +44,17 @@ namespace AudioSwitch
 
             volEvents = new VolEventsHandler(tbMaster);
             tbMaster.TrackBarValueChanged += tbMaster_TrackBarValueChanged;
+            tbMaster.MuteChanged += MuteChanged;
             RefreshDevices();
             UpdateListView();
             UpdateVolControls();
-            tbMaster.MuteChanged += MuteChanged;
-            SetIcon();
         }
 
         private static void RefreshDevices()
         {
-            DeviceList = EndPointControl.GetDevices();
+            DeviceList = EndPointControl.GetDevices(RenderType);
             if (DeviceList.Count > 0)
-                CurrentDevice = EndPointControl.GetDefaultDevice();
+                CurrentDevice = EndPointControl.GetDefaultDevice(RenderType);
         }
 
         protected override void WndProc(ref Message m)
@@ -68,7 +68,7 @@ namespace AudioSwitch
             if (e.IsSelected && CurrentDevice != e.ItemIndex)
             {
                 CurrentDevice = e.ItemIndex;
-                EndPointControl.SetDefaultDevice(CurrentDevice);
+                EndPointControl.SetDefaultDevice(CurrentDevice, RenderType);
                 UpdateVolControls();
             }
         }
@@ -77,6 +77,9 @@ namespace AudioSwitch
         {
             Hide();
             timer1.Enabled = false;
+            RenderType = EDataFlow.eRender;
+            RefreshDevices();
+            UpdateVolControls();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -90,6 +93,7 @@ namespace AudioSwitch
         {
             if (DateTime.Now - tooltipLastRefresh > tooltipRefreshRate)
             {
+                RenderType = ModifierKeys == Keys.Control ? EDataFlow.eCapture : EDataFlow.eRender;
                 RefreshDevices();
                 tooltipLastRefresh = DateTime.Now;
             }
@@ -98,10 +102,12 @@ namespace AudioSwitch
 
         private void notifyIcon1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (ModifierKeys == Keys.Control)
+            if (ModifierKeys == Keys.Shift)
                 Close();
 
+            RenderType = ModifierKeys == Keys.Control ? EDataFlow.eCapture : EDataFlow.eRender;
             RefreshDevices();
+
             if (e.Button == MouseButtons.Left)
                 UpdateListView();
         }
@@ -125,7 +131,7 @@ namespace AudioSwitch
                     if (DeviceList.Count > 0)
                     {
                         CurrentDevice = CurrentDevice == DeviceList.Count - 1 ? 0 : CurrentDevice + 1;
-                        EndPointControl.SetDefaultDevice(CurrentDevice);
+                        EndPointControl.SetDefaultDevice(CurrentDevice, RenderType);
                         notifyIcon1.ShowBalloonTip(0, "Audio output changed", DeviceList[CurrentDevice], ToolTipIcon.Info);
                     }
                     break;
@@ -151,13 +157,17 @@ namespace AudioSwitch
             if (DeviceList.Count > 0)
             {
                 if (VolumeDevice != null)
+                {
                     VolumeDevice.AudioEndpointVolume.OnVolumeNotification -= VolNotify;
+                    VolumeDevice.AudioSessionManager.Sessions[0].UnregisterAudioSessionNotification(volEvents);
+                }
 
-                VolumeDevice = EndPointControl.pEnum.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia);
+                VolumeDevice = EndPointControl.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
 
                 tbMaster.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
                 VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
                 VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
+                SetIcon();
                 timer1.Enabled = true;
             }
         }

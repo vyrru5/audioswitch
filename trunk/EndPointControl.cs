@@ -8,10 +8,10 @@ namespace AudioSwitch
         internal static readonly MMDeviceEnumerator pEnum = new MMDeviceEnumerator();
         private static readonly PolicyConfigVista pPolicyConfig = new PolicyConfigVista();
 
-        internal static int GetDefaultDevice()
+        internal static int GetDefaultDevice(EDataFlow RenderType)
         {
-            var pDevice = pEnum.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia);
-            var pDevices = pEnum.EnumerateAudioEndPoints(EDataFlow.eRender, EDeviceState.DEVICE_STATE_ACTIVE);
+            var pDevice = pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
+            var pDevices = pEnum.EnumerateAudioEndPoints(RenderType, EDeviceState.DEVICE_STATE_ACTIVE);
             var count = pDevices.Count;
             var defaultID = pDevice.ID;
 
@@ -21,16 +21,16 @@ namespace AudioSwitch
             return -1;
         }
 
-        internal static void SetDefaultDevice(int devID)
+        internal static void SetDefaultDevice(int devID, EDataFlow RenderType)
         {
-            var pDevices = pEnum.EnumerateAudioEndPoints(EDataFlow.eRender, EDeviceState.DEVICE_STATE_ACTIVE);
+            var pDevices = pEnum.EnumerateAudioEndPoints(RenderType, EDeviceState.DEVICE_STATE_ACTIVE);
             pPolicyConfig.SetDefaultEndpoint(pDevices[devID].ID, ERole.eMultimedia);
         }
 
-        internal static List<string> GetDevices()
+        internal static List<string> GetDevices(EDataFlow RenderType)
         {
             var list = new List<string>();
-            var pDevices = pEnum.EnumerateAudioEndPoints(EDataFlow.eRender, EDeviceState.DEVICE_STATE_ACTIVE);
+            var pDevices = pEnum.EnumerateAudioEndPoints(RenderType, EDeviceState.DEVICE_STATE_ACTIVE);
             var devCount = pDevices.Count;
 
             for (var i = 0; i < devCount; i++)
