@@ -94,10 +94,12 @@ namespace AudioSwitch
 
         private static Rectangle GetNotifyIconRectangle(IDisposable notifyicon)
         {
-            var num = (int) notifyicon.GetType().GetField("id", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(notifyicon);
-            var window = (NativeWindow) notifyicon.GetType().GetField("window", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(notifyicon);
-            var notifyiconidentifier2 = new NOTIFYICONIDENTIFIER { hWnd = window.Handle, uID = (uint)num };
-            notifyiconidentifier2.cbSize = (uint)Marshal.SizeOf(notifyiconidentifier2);
+            var field = notifyicon.GetType().GetField("id", BindingFlags.NonPublic | BindingFlags.Instance);
+            var num = (int) field.GetValue(notifyicon);
+            var fieldInfo = notifyicon.GetType().GetField("window", BindingFlags.NonPublic | BindingFlags.Instance);
+            var window = (NativeWindow) fieldInfo.GetValue(notifyicon);
+            var notifyiconidentifier2 = new NOTIFYICONIDENTIFIER {hWnd = window.Handle, uID = (uint) num};
+            notifyiconidentifier2.cbSize = (uint) Marshal.SizeOf(notifyiconidentifier2);
 
             RECT iconLocation;
             Shell_NotifyIconGetRect(ref notifyiconidentifier2, out iconLocation);

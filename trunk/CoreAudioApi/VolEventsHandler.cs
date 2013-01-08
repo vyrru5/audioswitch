@@ -4,24 +4,25 @@ using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
 {
-    class VolEventsHandler : IAudioSessionEvents
+    internal class VolEventsHandler : IAudioSessionEvents
     {
-        readonly ProgressTrackBar volumebar;
+        private readonly ProgressTrackBar volumebar;
 
         public VolEventsHandler(ProgressTrackBar VolumeBar)
         {
             volumebar = VolumeBar;
         }
 
-        delegate void MethodWithFloatArg(float Float);
+        delegate void MethodWithFloatArg(float Volume, bool Mute);
 
-        private void SafeSet(float Volume)
+        private void SafeSet(float Volume, bool Mute)
         {
             if (volumebar.InvokeRequired) 
-                volumebar.Invoke(new MethodWithFloatArg(SafeSet), Volume);
+                volumebar.Invoke(new MethodWithFloatArg(SafeSet), Volume, Mute);
             else
             {
                 volumebar.Value = (int)(Volume * 100);
+                volumebar.Mute = Mute;
             }
         }
 
@@ -30,7 +31,7 @@ namespace AudioSwitch.CoreAudioApi
         [PreserveSig]
         public int OnIconPathChanged([MarshalAs(UnmanagedType.LPWStr)] string NewIconPath, Guid EventContext) { return 0; }
         [PreserveSig]
-        public int OnSimpleVolumeChanged(float NewVolume, bool newMute, Guid EventContext) { SafeSet(NewVolume); return 0; }
+        public int OnSimpleVolumeChanged(float newVolume, bool newMute, Guid EventContext) { SafeSet(newVolume, newMute); return 0; }
         [PreserveSig]
         public int OnChannelVolumeChanged(UInt32 ChannelCount, IntPtr NewChannelVolumeArray, UInt32 ChangedChannel, Guid EventContext) { return 0; }
         [PreserveSig]

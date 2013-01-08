@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -65,23 +66,45 @@
     <Compile Include="CoreAudioApi\AudioMeterInformationChannels.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\AudioSessionControl.cs" />
-    <Compile Include="CoreAudioApi\AudioSessionDisconnectReason.cs" />
+    <Compile Include="CoreAudioApi\AudioSessionControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\AudioSessionDisconnectReason.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CoreAudioApi\AudioSessionManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\AudioSessionState.cs" />
+    <Compile Include="CoreAudioApi\AudioSessionState.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CoreAudioApi\AudioVolumeNotificationData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\EDataFlow.cs" />
-    <Compile Include="CoreAudioApi\EDeviceState.cs" />
-    <Compile Include="CoreAudioApi\EEndpointHardwareSupport.cs" />
-    <Compile Include="CoreAudioApi\ERole.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\AUDIO_VOLUME_NOTIFICATION_DATA.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\Blob.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\CLSCTX.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\eStgmAccess.cs" />
+    <Compile Include="CoreAudioApi\EDataFlow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\EDeviceState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\EEndpointHardwareSupport.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\ERole.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\AUDIO_VOLUME_NOTIFICATION_DATA.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\Blob.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\CLSCTX.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\eStgmAccess.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CoreAudioApi\Interfaces\IAudioEndpointVolume.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -91,7 +114,9 @@
     <Compile Include="CoreAudioApi\Interfaces\IAudioMeterInformation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\Interfaces\IAudioPeakMeter.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\IAudioPeakMeter.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CoreAudioApi\Interfaces\IAudioSessionControl2.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -113,15 +138,18 @@
     <Compile Include="CoreAudioApi\Interfaces\IMMDeviceEnumerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\Interfaces\IMMEndpoint.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IPolicyConfig.cs" />
-    <Compile Include="CoreAudioApi\Interfaces\IPolicyConfigVista.cs">
+    <Compile Include="CoreAudioApi\Interfaces\IMMEndpoint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\Interfaces\IPolicyConfig.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CoreAudioApi\Interfaces\IPropertyStore.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\Interfaces\ISimpleAudioVolume.cs" />
+    <Compile Include="CoreAudioApi\Interfaces\ISimpleAudioVolume.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CoreAudioApi\MMDevice.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -131,12 +159,15 @@
     <Compile Include="CoreAudioApi\MMDeviceEnumerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\PKEY.cs" />
-    <Compile Include="CoreAudioApi\PolicyConfigClient.cs" />
-    <Compile Include="CoreAudioApi\PolicyConfigVista.cs">
+    <Compile Include="CoreAudioApi\PKEY.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\PropertyKey.cs" />
+    <Compile Include="CoreAudioApi\PolicyConfigClient.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CoreAudioApi\PropertyKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CoreAudioApi\PropertyStore.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -149,17 +180,20 @@
     <Compile Include="CoreAudioApi\SessionCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\SimpleAudioVolume.cs" />
+    <Compile Include="CoreAudioApi\SimpleAudioVolume.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CoreAudioApi\VolEventsHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="EndPointControl.cs" />
+    <Compile Include="EndPoints.cs" />
     <Compile Include="FormSwitcher.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormSwitcher.Designer.cs">
       <DependentUpon>FormSwitcher.cs</DependentUpon>
     </Compile>
+    <Compile Include="IconExtract.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgressTrackBar.cs">
       <SubType>UserControl</SubType>
