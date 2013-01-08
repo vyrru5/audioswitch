@@ -26,13 +26,10 @@ namespace AudioSwitch.CoreAudioApi
     {
         private PropVariant _PropValue;
 
-        internal PropertyStoreProperty(PropertyKey key, PropVariant value)
+        internal PropertyStoreProperty(PropVariant value)
         {
-            Key = key;
             _PropValue = value;
         }
-
-        public PropertyKey Key { get; private set; }
 
         public object Value
         {

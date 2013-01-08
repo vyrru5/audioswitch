@@ -35,9 +35,7 @@
   <PropertyGroup>
     <RootNamespace>AudioSwitch</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup>
-    <NoWin32Manifest>true</NoWin32Manifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ApplicationIcon>appicon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -55,11 +53,7 @@
     <Compile Include="CoreAudioApi\AudioEndpointVolumeCallback.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\AudioEndpointVolumeChannel.cs" />
-    <Compile Include="CoreAudioApi\AudioEndpointVolumeChannels.cs" />
     <Compile Include="CoreAudioApi\AudioEndpointVolumeNotificationDelegate.cs" />
-    <Compile Include="CoreAudioApi\AudioEndpointVolumeStepInformation.cs" />
-    <Compile Include="CoreAudioApi\AudioEndPointVolumeVolumeRange.cs" />
     <Compile Include="CoreAudioApi\AudioMeterInformation.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -85,9 +79,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CoreAudioApi\EDeviceState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CoreAudioApi\EEndpointHardwareSupport.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CoreAudioApi\ERole.cs">
@@ -180,9 +171,6 @@
     <Compile Include="CoreAudioApi\SessionCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\SimpleAudioVolume.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="CoreAudioApi\VolEventsHandler.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -201,6 +189,7 @@
     <Compile Include="ProgressTrackBar.designer.cs">
       <DependentUpon>ProgressTrackBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

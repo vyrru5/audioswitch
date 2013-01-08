@@ -20,7 +20,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
 using System.Runtime.InteropServices;
 using AudioSwitch.CoreAudioApi.Interfaces;
 
@@ -30,20 +29,9 @@ namespace AudioSwitch.CoreAudioApi
     {
         private readonly IAudioSessionControl2 _AudioSessionControl;
 
-        public AudioMeterInformation AudioMeterInformation { get; private set; }
-        public SimpleAudioVolume SimpleAudioVolume { get; private set; }
-
-
         internal AudioSessionControl(IAudioSessionControl2 realAudioSessionControl)
         {
-            var _meters = realAudioSessionControl as IAudioMeterInformation;
-            var _volume = realAudioSessionControl as ISimpleAudioVolume; 
-            if (_meters != null)
-                AudioMeterInformation = new AudioMeterInformation(_meters);
-            if (_volume != null)
-                SimpleAudioVolume = new SimpleAudioVolume(_volume);
             _AudioSessionControl = realAudioSessionControl;
-            
         }
 
         public void RegisterAudioSessionNotification(IAudioSessionEvents eventConsumer)
@@ -54,82 +42,6 @@ namespace AudioSwitch.CoreAudioApi
         public void UnregisterAudioSessionNotification(IAudioSessionEvents eventConsumer)
         {
             Marshal.ThrowExceptionForHR(_AudioSessionControl.UnregisterAudioSessionNotification(eventConsumer));
-        }
-
-        public AudioSessionState State
-        {
-            get
-            {
-                AudioSessionState res;
-                Marshal.ThrowExceptionForHR(_AudioSessionControl.GetState(out res));
-                return res;
-            }
-        }
-
-        public string DisplayName
-        {
-            get
-            {
-                IntPtr NamePtr;
-                Marshal.ThrowExceptionForHR(_AudioSessionControl.GetDisplayName(out NamePtr));
-                string res = Marshal.PtrToStringAuto(NamePtr);
-                Marshal.FreeCoTaskMem(NamePtr);
-                return res;
-            }
-        }
-
-        public string IconPath
-        {
-            get
-            {
-                IntPtr NamePtr;
-                Marshal.ThrowExceptionForHR(_AudioSessionControl.GetIconPath(out NamePtr));
-                string res = Marshal.PtrToStringAuto(NamePtr);
-                Marshal.FreeCoTaskMem(NamePtr);
-                return res;
-            }
-        }
-
-        public string SessionIdentifier
-        {
-            get
-            {
-                IntPtr NamePtr;
-                Marshal.ThrowExceptionForHR(_AudioSessionControl.GetSessionIdentifier(out NamePtr));
-                string res = Marshal.PtrToStringAuto(NamePtr);
-                Marshal.FreeCoTaskMem(NamePtr);
-                return res;
-            }
-        }
-
-        public string SessionInstanceIdentifier
-        {
-            get
-            {
-                IntPtr NamePtr;
-                Marshal.ThrowExceptionForHR(_AudioSessionControl.GetSessionInstanceIdentifier(out NamePtr));
-                string res = Marshal.PtrToStringAuto(NamePtr);
-                Marshal.FreeCoTaskMem(NamePtr);
-                return res;
-            }
-        }
-
-        public uint ProcessID
-        {
-            get
-            {
-                uint pid;
-                Marshal.ThrowExceptionForHR(_AudioSessionControl.GetProcessId(out pid));
-                return pid;
-            }
-        }
-
-        public bool IsSystemIsSystemSoundsSession
-        {
-            get
-            {
-                return (_AudioSessionControl.IsSystemSoundsSession() == 0);  //S_OK
-            }
         }
     }
 }

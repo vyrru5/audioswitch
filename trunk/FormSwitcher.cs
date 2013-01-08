@@ -26,21 +26,25 @@ namespace AudioSwitch
         {
             InitializeComponent();
             SetWindowTheme(listView1.Handle, "explorer", null);
+            volEvents = new VolEventsHandler(tbMaster);
             notifyIcon1.Icon = Resources._0_25;
+        }
+
+        private void FormSwitcher_Load(object sender, EventArgs e)
+        {
+            RefreshDevices(false);
+            AddVolControls();
+            timer1.Enabled = true;
 
             tbMaster.TrackBarValueChanged += tbMaster_TrackBarValueChanged;
             tbMaster.MuteChanged += MuteChanged;
-            volEvents = new VolEventsHandler(tbMaster);
-            RefreshDevices(false);
-            AddVolControls();
-            SetIcon();
-            timer1.Enabled = true;
+            listView1.ItemSelectionChanged += DeviceListOnSelectionChanged;
         }
 
         private void RefreshDevices(bool UpdateListView)
         {
             DeviceList = EndPoints.GetDevices(RenderType);
-            if (DeviceList.Count <= 0) return;
+            if (DeviceList.Count == 0) return;
 
             CurrentDevice = EndPoints.GetDefaultDevice(RenderType);
             if (!UpdateListView) return;
@@ -50,18 +54,12 @@ namespace AudioSwitch
 
             if (listView1.LargeImageList != null)
                 listView1.LargeImageList.Dispose();
-
-            listView1.LargeImageList = new ImageList
-                                           {
-                                               ImageSize = new Size(32, 32),
-                                               ColorDepth = ColorDepth.Depth32Bit
-                                           };
+            listView1.LargeImageList = IconExtract.Extract(EndPoints.Icons);
 
             for (var i = 0; i < DeviceList.Count; i++)
             {
                 var item = new ListViewItem { ImageIndex = i, Text = DeviceList[i] };
                 listView1.Items.Add(item);
-                listView1.LargeImageList.Images.Add(IconExtract.Extract(EndPoints.Icons[i]));
             }
             if (DeviceList.Count > 0)
                 listView1.Items[CurrentDevice].Selected = true;
@@ -81,8 +79,8 @@ namespace AudioSwitch
             {
                 CurrentDevice = e.ItemIndex;
                 EndPoints.SetDefaultDevice(CurrentDevice, RenderType);
+                RemoveVolControls();
                 AddVolControls();
-                SetIcon();
             }
         }
 
@@ -146,7 +144,6 @@ namespace AudioSwitch
                     break;
             }
             AddVolControls();
-            SetIcon();
         }
 
         private void RemoveVolControls()
@@ -169,6 +166,7 @@ namespace AudioSwitch
             tbMaster.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
             VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
             VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
+            SetIcon();
         }
 
         private void VolNotify(AudioVolumeNotificationData data)

@@ -66,7 +66,6 @@ namespace AudioSwitch
             this.listView1.TileSize = new System.Drawing.Size(222, 40);
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Tile;
-            this.listView1.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.DeviceListOnSelectionChanged);
             // 
             // pictureBox1
             // 
@@ -105,6 +104,7 @@ namespace AudioSwitch
             this.Name = "FormSwitcher";
             this.TopMost = true;
             this.Deactivate += new System.EventHandler(this.OnDeactivated);
+            this.Load += new System.EventHandler(this.FormSwitcher_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 

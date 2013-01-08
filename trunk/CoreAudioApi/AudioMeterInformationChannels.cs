@@ -29,7 +29,7 @@ namespace AudioSwitch.CoreAudioApi
     {
         readonly IAudioMeterInformation _AudioMeterInformation;
 
-        public int Count
+        private int Count
         {
             get
             {
@@ -43,7 +43,7 @@ namespace AudioSwitch.CoreAudioApi
         {
             get
             {
-                float[] peakValues = new float[Count];
+                var peakValues = new float[Count];
                 GCHandle Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
                 Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetChannelsPeakValues(peakValues.Length, Params.AddrOfPinnedObject()));
                 Params.Free();
