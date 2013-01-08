@@ -10,19 +10,15 @@ namespace AudioSwitch
 {
     public partial class FormSwitcher : Form
     {
-        [DllImport("Shell32.dll")]
-        private static extern int ExtractIconEx(string libName, int iconIndex, IntPtr[] largeIcon, IntPtr[] smallIcon, int nIcons);
-
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         private static extern int SetWindowTheme(IntPtr hWnd, string appName, string partList);
 
-        private readonly TimeSpan tooltipRefreshRate = new TimeSpan(0, 0, 0, 0, 300);
-        private DateTime tooltipLastRefresh = DateTime.Now;
         private readonly VolEventsHandler volEvents;
         private static MMDevice VolumeDevice;
         private static List<string> DeviceList = new List<string>();
         private static int CurrentDevice;
         private static EDataFlow RenderType = EDataFlow.eRender;
+
         private byte lastL;
         private byte lastR;
         
@@ -30,31 +26,47 @@ namespace AudioSwitch
         {
             InitializeComponent();
             SetWindowTheme(listView1.Handle, "explorer", null);
+            notifyIcon1.Icon = Resources._0_25;
 
-            var icons = new IntPtr[1];
-            ExtractIconEx("mmres.dll", 0, icons, null, 1);
+            tbMaster.TrackBarValueChanged += tbMaster_TrackBarValueChanged;
+            tbMaster.MuteChanged += MuteChanged;
+            volEvents = new VolEventsHandler(tbMaster);
+            RefreshDevices(false);
+            AddVolControls();
+            SetIcon();
+            timer1.Enabled = true;
+        }
+
+        private void RefreshDevices(bool UpdateListView)
+        {
+            DeviceList = EndPoints.GetDevices(RenderType);
+            if (DeviceList.Count <= 0) return;
+
+            CurrentDevice = EndPoints.GetDefaultDevice(RenderType);
+            if (!UpdateListView) return;
+
+            listView1.Clear();
+            listView1.BeginUpdate();
+
+            if (listView1.LargeImageList != null)
+                listView1.LargeImageList.Dispose();
+
             listView1.LargeImageList = new ImageList
                                            {
                                                ImageSize = new Size(32, 32),
                                                ColorDepth = ColorDepth.Depth32Bit
                                            };
-            
-            listView1.LargeImageList.Images.Add(Icon.FromHandle(icons[0]));
-            notifyIcon1.Icon = Resources._0_25;
 
-            volEvents = new VolEventsHandler(tbMaster);
-            tbMaster.TrackBarValueChanged += tbMaster_TrackBarValueChanged;
-            tbMaster.MuteChanged += MuteChanged;
-            RefreshDevices();
-            UpdateListView();
-            UpdateVolControls();
-        }
-
-        private static void RefreshDevices()
-        {
-            DeviceList = EndPointControl.GetDevices(RenderType);
+            for (var i = 0; i < DeviceList.Count; i++)
+            {
+                var item = new ListViewItem { ImageIndex = i, Text = DeviceList[i] };
+                listView1.Items.Add(item);
+                listView1.LargeImageList.Images.Add(IconExtract.Extract(EndPoints.Icons[i]));
+            }
             if (DeviceList.Count > 0)
-                CurrentDevice = EndPointControl.GetDefaultDevice(RenderType);
+                listView1.Items[CurrentDevice].Selected = true;
+
+            listView1.EndUpdate();
         }
 
         protected override void WndProc(ref Message m)
@@ -68,8 +80,9 @@ namespace AudioSwitch
             if (e.IsSelected && CurrentDevice != e.ItemIndex)
             {
                 CurrentDevice = e.ItemIndex;
-                EndPointControl.SetDefaultDevice(CurrentDevice, RenderType);
-                UpdateVolControls();
+                EndPoints.SetDefaultDevice(CurrentDevice, RenderType);
+                AddVolControls();
+                SetIcon();
             }
         }
 
@@ -77,9 +90,10 @@ namespace AudioSwitch
         {
             Hide();
             timer1.Enabled = false;
+            RemoveVolControls();
             RenderType = EDataFlow.eRender;
-            RefreshDevices();
-            UpdateVolControls();
+            RefreshDevices(false);
+            AddVolControls();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -91,28 +105,23 @@ namespace AudioSwitch
 
         private void notifyIcon1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (DateTime.Now - tooltipLastRefresh > tooltipRefreshRate)
-            {
-                RenderType = ModifierKeys == Keys.Control ? EDataFlow.eCapture : EDataFlow.eRender;
-                RefreshDevices();
-                tooltipLastRefresh = DateTime.Now;
-            }
             notifyIcon1.Text = DeviceList.Count > 0 ? DeviceList[CurrentDevice] : "No audio devices connected";
         }
 
         private void notifyIcon1_MouseDown(object sender, MouseEventArgs e)
         {
             if (ModifierKeys == Keys.Shift)
+            {
                 Close();
+                return;
+            }
 
+            RemoveVolControls();
             RenderType = ModifierKeys == Keys.Control ? EDataFlow.eCapture : EDataFlow.eRender;
-            RefreshDevices();
-
-            if (e.Button == MouseButtons.Left)
-                UpdateListView();
+            RefreshDevices(true);
         }
 
-        private void NotifyIconMouseUp(object sender, MouseEventArgs e)
+        private void notifyIcon1_MouseUp(object sender, MouseEventArgs e)
         {
             switch (e.Button)
             {
@@ -122,7 +131,7 @@ namespace AudioSwitch
                     Left = point.X;
                     Top = point.Y;
 
-                    UpdateVolControls();
+                    timer1.Enabled = true;
                     Show();
                     Activate();
                     break;
@@ -131,45 +140,35 @@ namespace AudioSwitch
                     if (DeviceList.Count > 0)
                     {
                         CurrentDevice = CurrentDevice == DeviceList.Count - 1 ? 0 : CurrentDevice + 1;
-                        EndPointControl.SetDefaultDevice(CurrentDevice, RenderType);
-                        notifyIcon1.ShowBalloonTip(0, "Audio output changed", DeviceList[CurrentDevice], ToolTipIcon.Info);
+                        EndPoints.SetDefaultDevice(CurrentDevice, RenderType);
+                        notifyIcon1.ShowBalloonTip(0, "Audio device changed", DeviceList[CurrentDevice], ToolTipIcon.Info);
                     }
                     break;
             }
+            AddVolControls();
+            SetIcon();
         }
 
-        private void UpdateListView()
+        private void RemoveVolControls()
         {
-            listView1.Clear();
-            listView1.BeginUpdate();
-            foreach (var audioDevice in DeviceList)
+            if (DeviceList.Count == 0) return;
+
+            VolumeDevice.AudioEndpointVolume.OnVolumeNotification -= VolNotify;
+            try
             {
-                var item = new ListViewItem { ImageIndex = 0, Text = audioDevice };
-                listView1.Items.Add(item);
+                VolumeDevice.AudioSessionManager.Sessions[0].UnregisterAudioSessionNotification(volEvents);
             }
-            if (DeviceList.Count > 0)
-                listView1.Items[CurrentDevice].Selected = true;
-            listView1.EndUpdate();
+            catch {}
         }
 
-        private void UpdateVolControls()
+        private void AddVolControls()
         {
-            if (DeviceList.Count > 0)
-            {
-                if (VolumeDevice != null)
-                {
-                    VolumeDevice.AudioEndpointVolume.OnVolumeNotification -= VolNotify;
-                    VolumeDevice.AudioSessionManager.Sessions[0].UnregisterAudioSessionNotification(volEvents);
-                }
-
-                VolumeDevice = EndPointControl.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
-
-                tbMaster.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
-                VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
-                VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
-                SetIcon();
-                timer1.Enabled = true;
-            }
+            if (DeviceList.Count == 0) return;
+            
+            VolumeDevice = EndPoints.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
+            tbMaster.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
+            VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
+            VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
         }
 
         private void VolNotify(AudioVolumeNotificationData data)
@@ -181,7 +180,7 @@ namespace AudioSwitch
             {
                 if (!tbMaster.Moving)
                     tbMaster.Value = (int) (data.MasterVolume*100);
-                tbMaster.Mute = VolumeDevice.AudioEndpointVolume.Mute;
+                tbMaster.Mute = data.Muted;
                 SetIcon();
             }
         }
@@ -227,7 +226,7 @@ namespace AudioSwitch
 
         private void SetIcon()
         {
-            if (VolumeDevice.AudioEndpointVolume.Mute)
+            if (tbMaster.Mute)
                 notifyIcon1.Icon = Resources.mute;
             else if (tbMaster.Value == 0)
                 notifyIcon1.Icon = Resources._0_25;

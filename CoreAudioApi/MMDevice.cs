@@ -124,6 +124,19 @@ namespace AudioSwitch.CoreAudioApi
             }
         }
 
+        public string IconPath
+        {
+            get
+            {
+                if (_PropertyStore == null)
+                    GetPropertyInformation();
+                if (_PropertyStore.Contains(PKEY.PKEY_DeviceClass_IconPath))
+                {
+                    return (string)_PropertyStore[PKEY.PKEY_DeviceClass_IconPath].Value;
+                }
+                return "Unknown";
+            }
+        }
 
         public string ID
         {

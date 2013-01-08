@@ -27,16 +27,12 @@ namespace AudioSwitch
             {
                 Beat.BackColor = value ? Color.Red : SystemColors.ControlDark;
                 _mute = value;
-                MuteChanged(this, EventArgs.Empty);
             }
         }
 
         public int Value
         {
-            get
-            {
-                return _TrackBarValue;
-            }
+            get { return _TrackBarValue; }
             set
             {
                 _TrackBarValue = value;
@@ -92,7 +88,11 @@ namespace AudioSwitch
                 Moving = true;
             }
             else
+            {
                 Mute = !Mute;
+                if (MuteChanged != null)
+                    MuteChanged(this, null);
+            }
         }
 
         private void btnThumb_MouseUp(object sender, MouseEventArgs e)
@@ -151,7 +151,11 @@ namespace AudioSwitch
                 Moving = true;
             }
             else
+            {
                 Mute = !Mute;
+                if (MuteChanged != null)
+                    MuteChanged(this, null);
+            }
         }
 
         private void lblGraph_MouseMove(object sender, MouseEventArgs e)
