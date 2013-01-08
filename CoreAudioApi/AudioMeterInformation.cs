@@ -28,7 +28,6 @@ namespace AudioSwitch.CoreAudioApi
     public class AudioMeterInformation
     {
         private readonly IAudioMeterInformation _AudioMeterInformation;
-        private readonly EEndpointHardwareSupport _HardwareSupport;
         private readonly AudioMeterInformationChannels _Channels;
 
         internal AudioMeterInformation(IAudioMeterInformation realInterface)
@@ -37,7 +36,6 @@ namespace AudioSwitch.CoreAudioApi
 
             _AudioMeterInformation = realInterface;
             Marshal.ThrowExceptionForHR(_AudioMeterInformation.QueryHardwareSupport(out HardwareSupp));
-            _HardwareSupport = (EEndpointHardwareSupport)HardwareSupp;
             _Channels = new AudioMeterInformationChannels(_AudioMeterInformation);
 
         }
@@ -49,29 +47,5 @@ namespace AudioSwitch.CoreAudioApi
                 return _Channels;
             }
         }
-
-        public EEndpointHardwareSupport HardwareSupport
-        {
-            get
-            {
-                return _HardwareSupport;
-            }
-        }
-
-        public float MasterPeakValue
-        {
-            get
-            {
-                float result;
-                Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetPeakValue(out result));
-                return result;
-            }
-        }
-
-       
-
-      
-
-
     }
 }

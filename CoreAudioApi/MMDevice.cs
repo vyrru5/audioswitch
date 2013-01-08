@@ -99,16 +99,6 @@ namespace AudioSwitch.CoreAudioApi
             }
         }
 
-        public PropertyStore Properties
-        {
-            get
-            {
-                if (_PropertyStore == null)
-                    GetPropertyInformation();
-                return _PropertyStore;
-            }
-        }
-
         public string FriendlyName
         {
             get
@@ -119,8 +109,7 @@ namespace AudioSwitch.CoreAudioApi
                 {
                     return (string)_PropertyStore[PKEY.PKEY_DeviceInterface_FriendlyName].Value;
                 }
-                else
-                    return "Unknown";
+                return "Unknown";
             }
         }
 
@@ -145,28 +134,6 @@ namespace AudioSwitch.CoreAudioApi
                 string Result;
                 Marshal.ThrowExceptionForHR(_RealDevice.GetId(out Result));
                 return Result;
-            }
-        }
-
-        public EDataFlow DataFlow
-        {
-            get
-            {
-                EDataFlow Result;
-                var ep = _RealDevice as IMMEndpoint ;
-                ep.GetDataFlow(out Result);
-                return Result;
-            }
-        }
-
-        public EDeviceState State
-        {
-            get
-            {
-                EDeviceState Result;
-                Marshal.ThrowExceptionForHR(_RealDevice.GetState(out Result));
-                return Result;
-
             }
         }
 

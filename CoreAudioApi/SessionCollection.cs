@@ -42,15 +42,5 @@ namespace AudioSwitch.CoreAudioApi
                 return new AudioSessionControl(_Result);
             }
         }
-
-        public int Count
-        {
-            get
-            {
-                int result;
-                Marshal.ThrowExceptionForHR(_AudioSessionEnumerator.GetCount(out result));
-                return (int)result;
-            }
-        }
     }
 }
