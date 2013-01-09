@@ -27,7 +27,6 @@ namespace AudioSwitch
             InitializeComponent();
             SetWindowTheme(listView1.Handle, "explorer", null);
             volEvents = new VolEventsHandler(tbMaster);
-            notifyIcon1.Icon = Resources._0_25;
         }
 
         private void FormSwitcher_Load(object sender, EventArgs e)
