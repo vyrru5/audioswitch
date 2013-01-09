@@ -48,9 +48,9 @@ namespace AudioSwitch
             // 
             // notifyIcon1
             // 
+            this.notifyIcon1.Text = "AudioSwitch";
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDown);
-            this.notifyIcon1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseMove);
             this.notifyIcon1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseUp);
             // 
             // listView1

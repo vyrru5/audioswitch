@@ -44,7 +44,7 @@ namespace AudioSwitch.CoreAudioApi
             get
             {
                 var peakValues = new float[Count];
-                GCHandle Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
+                var Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
                 Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetChannelsPeakValues(peakValues.Length, Params.AddrOfPinnedObject()));
                 Params.Free();
                 return peakValues[index];

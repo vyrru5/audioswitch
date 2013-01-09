@@ -34,7 +34,6 @@ namespace AudioSwitch
         {
             RefreshDevices(false);
             AddVolControls();
-            timer1.Enabled = true;
 
             tbMaster.TrackBarValueChanged += tbMaster_TrackBarValueChanged;
             tbMaster.MuteChanged += MuteChanged;
@@ -101,11 +100,6 @@ namespace AudioSwitch
             base.OnLoad(e);
         }
 
-        private void notifyIcon1_MouseMove(object sender, MouseEventArgs e)
-        {
-            notifyIcon1.Text = DeviceList.Count > 0 ? DeviceList[CurrentDevice] : "No audio devices connected";
-        }
-
         private void notifyIcon1_MouseDown(object sender, MouseEventArgs e)
         {
             if (ModifierKeys == Keys.Shift)
@@ -115,12 +109,35 @@ namespace AudioSwitch
             }
 
             RemoveVolControls();
-            RenderType = ModifierKeys == Keys.Control ? EDataFlow.eCapture : EDataFlow.eRender;
+            RenderType = ModifierKeys.HasFlag(Keys.Control) ? EDataFlow.eCapture : EDataFlow.eRender;
+
+            if (ModifierKeys.HasFlag(Keys.Alt))
+            {
+                RefreshDevices(false);
+                AddVolControls();
+                VolumeDevice.AudioEndpointVolume.Mute = !VolumeDevice.AudioEndpointVolume.Mute;
+                tbMaster.Mute = VolumeDevice.AudioEndpointVolume.Mute;
+                RemoveVolControls();
+
+                if (RenderType == EDataFlow.eCapture)
+                {
+                    var mutetxt = string.Format("Device {0}muted", tbMaster.Mute ? "" : "un");
+                    notifyIcon1.ShowBalloonTip(0, mutetxt, DeviceList[CurrentDevice], ToolTipIcon.Info);
+                }
+                
+                RenderType = EDataFlow.eRender;
+                RefreshDevices(false);
+                AddVolControls();
+                return;
+            }
+            
             RefreshDevices(true);
         }
 
         private void notifyIcon1_MouseUp(object sender, MouseEventArgs e)
         {
+            if (ModifierKeys.HasFlag(Keys.Alt))
+                return;
             switch (e.Button)
             {
                 case MouseButtons.Left:
@@ -164,6 +181,7 @@ namespace AudioSwitch
             
             VolumeDevice = EndPoints.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
             tbMaster.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
+            tbMaster.Mute = VolumeDevice.AudioEndpointVolume.Mute;
             VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
             VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
             SetIcon();
@@ -181,11 +199,6 @@ namespace AudioSwitch
                 tbMaster.Mute = data.Muted;
                 SetIcon();
             }
-        }
-
-        private void MuteChanged(object sender, EventArgs eventArgs)
-        {
-            VolumeDevice.AudioEndpointVolume.Mute = tbMaster.Mute;
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
@@ -219,6 +232,12 @@ namespace AudioSwitch
                 VolumeDevice.AudioEndpointVolume.Mute = false;
 
             VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar = tbMaster.Value / 100.0f;
+            SetIcon();
+        }
+
+        private void MuteChanged(object sender, EventArgs eventArgs)
+        {
+            VolumeDevice.AudioEndpointVolume.Mute = tbMaster.Mute;
             SetIcon();
         }
 

@@ -106,9 +106,7 @@ namespace AudioSwitch.CoreAudioApi
                 if (_PropertyStore == null)
                     GetPropertyInformation();
                 if (_PropertyStore.Contains(PKEY.PKEY_DeviceInterface_FriendlyName))
-                {
-                    return (string)_PropertyStore[PKEY.PKEY_DeviceInterface_FriendlyName].Value;
-                }
+                    return (string) _PropertyStore[PKEY.PKEY_DeviceInterface_FriendlyName].Value;
                 return "Unknown";
             }
         }
@@ -120,9 +118,7 @@ namespace AudioSwitch.CoreAudioApi
                 if (_PropertyStore == null)
                     GetPropertyInformation();
                 if (_PropertyStore.Contains(PKEY.PKEY_DeviceClass_IconPath))
-                {
-                    return (string)_PropertyStore[PKEY.PKEY_DeviceClass_IconPath].Value;
-                }
+                    return (string) _PropertyStore[PKEY.PKEY_DeviceClass_IconPath].Value;
                 return "Unknown";
             }
         }
