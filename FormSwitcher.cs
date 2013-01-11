@@ -10,6 +10,9 @@ namespace AudioSwitch
 {
     public partial class FormSwitcher : Form
     {
+        [DllImport("Shell32.dll")]
+        private static extern int ExtractIconEx(string libName, int iconIndex, IntPtr[] largeIcon, IntPtr[] smallIcon, int nIcons);
+
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         private static extern int SetWindowTheme(IntPtr hWnd, string appName, string partList);
 
@@ -46,22 +49,33 @@ namespace AudioSwitch
 
             CurrentDevice = EndPoints.GetDefaultDevice(RenderType);
             if (!UpdateListView) return;
-
-            listView1.Clear();
+            
             listView1.BeginUpdate();
+            listView1.Clear();
 
             if (listView1.LargeImageList != null)
                 listView1.LargeImageList.Dispose();
-            listView1.LargeImageList = IconExtract.Extract(EndPoints.Icons);
+
+            var LargeImageList = new ImageList
+            {
+                ImageSize = new Size(32, 32),
+                ColorDepth = ColorDepth.Depth32Bit
+            };
 
             for (var i = 0; i < DeviceList.Count; i++)
             {
+                var iconAdr = EndPoints.Icons[i].Split(',');
+                var hIconEx = new IntPtr[1];
+                ExtractIconEx(iconAdr[0], int.Parse(iconAdr[1]), hIconEx, null, 1);
+                LargeImageList.Images.Add(Icon.FromHandle(hIconEx[0]));
+
                 var item = new ListViewItem { ImageIndex = i, Text = DeviceList[i] };
                 listView1.Items.Add(item);
             }
             if (DeviceList.Count > 0)
                 listView1.Items[CurrentDevice].Selected = true;
 
+            listView1.LargeImageList = LargeImageList;
             listView1.EndUpdate();
         }
 

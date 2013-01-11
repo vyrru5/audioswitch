@@ -28,9 +28,6 @@ namespace AudioSwitch
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProgressTrackBar));
-            this.Beat = new System.Windows.Forms.Panel();
-            this.Dragger = new System.Windows.Forms.PictureBox();
             this.panelLeft = new System.Windows.Forms.Panel();
             this.l13 = new System.Windows.Forms.Label();
             this.l12 = new System.Windows.Forms.Label();
@@ -60,39 +57,15 @@ namespace AudioSwitch
             this.r2 = new System.Windows.Forms.Label();
             this.r1 = new System.Windows.Forms.Label();
             this.lblGraph = new System.Windows.Forms.Label();
-            this.Beat.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Dragger)).BeginInit();
+            this.Thumb = new System.Windows.Forms.PictureBox();
             this.panelLeft.SuspendLayout();
             this.panelRight.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.Thumb)).BeginInit();
             this.SuspendLayout();
-            // 
-            // Beat
-            // 
-            this.Beat.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.Beat.Controls.Add(this.Dragger);
-            this.Beat.Location = new System.Drawing.Point(0, 6);
-            this.Beat.Name = "Beat";
-            this.Beat.Size = new System.Drawing.Size(25, 9);
-            this.Beat.TabIndex = 5;
-            // 
-            // Dragger
-            // 
-            this.Dragger.Image = ((System.Drawing.Image)(resources.GetObject("Dragger.Image")));
-            this.Dragger.Location = new System.Drawing.Point(1, 1);
-            this.Dragger.Margin = new System.Windows.Forms.Padding(0);
-            this.Dragger.Name = "Dragger";
-            this.Dragger.Size = new System.Drawing.Size(23, 7);
-            this.Dragger.TabIndex = 0;
-            this.Dragger.TabStop = false;
-            this.Dragger.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnThumb_MouseDown);
-            this.Dragger.MouseEnter += new System.EventHandler(this.Dragger_MouseEnter);
-            this.Dragger.MouseLeave += new System.EventHandler(this.Dragger_MouseLeave);
-            this.Dragger.MouseMove += new System.Windows.Forms.MouseEventHandler(this.btnThumb_MouseMove);
-            this.Dragger.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnThumb_MouseUp);
             // 
             // panelLeft
             // 
-            this.panelLeft.BackColor = System.Drawing.Color.Black;
+            this.panelLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panelLeft.Controls.Add(this.l13);
             this.panelLeft.Controls.Add(this.l12);
             this.panelLeft.Controls.Add(this.l11);
@@ -217,7 +190,7 @@ namespace AudioSwitch
             // 
             // panelRight
             // 
-            this.panelRight.BackColor = System.Drawing.Color.Black;
+            this.panelRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panelRight.Controls.Add(this.r13);
             this.panelRight.Controls.Add(this.r12);
             this.panelRight.Controls.Add(this.r11);
@@ -342,39 +315,53 @@ namespace AudioSwitch
             // 
             // lblGraph
             // 
-            this.lblGraph.AutoSize = true;
             this.lblGraph.Font = new System.Drawing.Font("Microsoft Sans Serif", 3.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(186)));
-            this.lblGraph.Location = new System.Drawing.Point(-1, 7);
+            this.lblGraph.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblGraph.Location = new System.Drawing.Point(0, 7);
+            this.lblGraph.Margin = new System.Windows.Forms.Padding(0);
             this.lblGraph.Name = "lblGraph";
-            this.lblGraph.Size = new System.Drawing.Size(197, 6);
+            this.lblGraph.Size = new System.Drawing.Size(196, 7);
             this.lblGraph.TabIndex = 11;
-            this.lblGraph.Text = " |       |       |       |       |       |       |       |       |       |       " +
-    "|       |       |       |       |       |       |       |       |       |       " +
-    "|       |       |       |       |";
+            this.lblGraph.Text = "|       |       |       |       |       |       |       |       |       |       |" +
+    "       |       |       |       |       |       |       |       |       |       |" +
+    "       |       |       |       |";
             this.lblGraph.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseDown);
             this.lblGraph.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseMove);
             this.lblGraph.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseUp);
             // 
+            // Thumb
+            // 
+            this.Thumb.BackColor = System.Drawing.Color.Transparent;
+            this.Thumb.Image = global::AudioSwitch.Properties.Resources.ThumbNormal;
+            this.Thumb.Location = new System.Drawing.Point(2, 6);
+            this.Thumb.Name = "Thumb";
+            this.Thumb.Size = new System.Drawing.Size(31, 9);
+            this.Thumb.TabIndex = 13;
+            this.Thumb.TabStop = false;
+            this.Thumb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Thumb_MouseDown);
+            this.Thumb.MouseEnter += new System.EventHandler(this.Thumb_MouseEnter);
+            this.Thumb.MouseLeave += new System.EventHandler(this.Thumb_MouseLeave);
+            this.Thumb.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Thumb_MouseMove);
+            this.Thumb.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Thumb_MouseUp);
+            this.Thumb.Move += new System.EventHandler(this.Thumb_Move);
+            // 
             // ProgressTrackBar
             // 
+            this.Controls.Add(this.Thumb);
             this.Controls.Add(this.panelRight);
-            this.Controls.Add(this.Beat);
             this.Controls.Add(this.panelLeft);
             this.Controls.Add(this.lblGraph);
             this.Name = "ProgressTrackBar";
             this.Size = new System.Drawing.Size(196, 21);
-            this.Beat.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.Dragger)).EndInit();
             this.panelLeft.ResumeLayout(false);
             this.panelRight.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.Thumb)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel Beat;
         private System.Windows.Forms.Panel panelLeft;
         private System.Windows.Forms.Label l10;
         private System.Windows.Forms.Label l9;
@@ -398,12 +385,12 @@ namespace AudioSwitch
         private System.Windows.Forms.Label r2;
         private System.Windows.Forms.Label r1;
         private System.Windows.Forms.Label lblGraph;
-        private System.Windows.Forms.PictureBox Dragger;
         private System.Windows.Forms.Label l13;
         private System.Windows.Forms.Label l12;
         private System.Windows.Forms.Label l11;
         private System.Windows.Forms.Label r13;
         private System.Windows.Forms.Label r12;
         private System.Windows.Forms.Label r11;
+        private System.Windows.Forms.PictureBox Thumb;
     }
 }

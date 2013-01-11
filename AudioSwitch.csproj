@@ -37,7 +37,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>appicon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\appicon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>AudioSwitch.Program</StartupObject>
@@ -184,7 +184,6 @@
     <Compile Include="FormSwitcher.Designer.cs">
       <DependentUpon>FormSwitcher.cs</DependentUpon>
     </Compile>
-    <Compile Include="IconExtract.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgressTrackBar.cs">
       <SubType>UserControl</SubType>
@@ -210,15 +209,19 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="appicon.ico" />
-    <None Include="states\mute.ico" />
-    <None Include="states\75-100.ico" />
-    <None Include="states\50-75.ico" />
-    <None Include="states\25-50.ico" />
-    <None Include="states\0-25.ico" />
+    <Content Include="Resources\appicon.ico" />
+    <None Include="Resources\ThumbHover.png" />
+    <None Include="Resources\ThumbMute.png" />
+    <None Include="Resources\ThumbNormal.png" />
+    <None Include="Resources\mute.ico" />
+    <None Include="Resources\75-100.ico" />
+    <None Include="Resources\50-75.ico" />
+    <None Include="Resources\25-50.ico" />
+    <None Include="Resources\0-25.ico" />
   </ItemGroup>
 </Project>
