@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using AudioSwitch.Properties;
 
 namespace AudioSwitch
 {
@@ -16,26 +17,27 @@ namespace AudioSwitch
         public EventHandler MuteChanged;
 
         private Point pMousePosition = Point.Empty;
-        private int _TrackBarValue;
         public bool Moving;
 
         private bool _mute;
         public bool Mute
         {
             get { return _mute; }
-            set 
+            set
             {
-                Beat.BackColor = value ? Color.Red : SystemColors.ControlDark;
+                Thumb.Image.Dispose();
+                Thumb.Image = value ? Resources.ThumbMute : Resources.ThumbNormal;
                 _mute = value;
             }
         }
 
+        private int _value;
         public int Value
         {
-            get { return _TrackBarValue; }
+            get { return _value; }
             set
             {
-                _TrackBarValue = value;
+                _value = value;
                 MoveThumb();
             }
         }
@@ -75,16 +77,16 @@ namespace AudioSwitch
 
         private void MoveThumb()
         {
-            var trackDistance = ClientSize.Width - Beat.Width;
-            var fractionMoved = (float)_TrackBarValue / 100;
-            Beat.Left = (int)(fractionMoved * trackDistance);
+            var trackDistance = ClientSize.Width - Thumb.Width;
+            var fractionMoved = (float)_value / 100;
+            Thumb.Left = (int)(fractionMoved * trackDistance);
         }
 
-        private void btnThumb_MouseDown(object sender, MouseEventArgs e)
+        private void Thumb_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                pMousePosition = Beat.PointToClient(MousePosition);
+                pMousePosition = Thumb.PointToClient(MousePosition);
                 Moving = true;
             }
             else
@@ -95,42 +97,31 @@ namespace AudioSwitch
             }
         }
 
-        private void btnThumb_MouseUp(object sender, MouseEventArgs e)
+        private void Thumb_MouseUp(object sender, MouseEventArgs e)
         {
             Moving = false;
         }
 
-        private void btnThumb_MouseMove(object sender, MouseEventArgs e)
+        private void Thumb_MouseMove(object sender, MouseEventArgs e)
         {
             if (Moving && e.Button == MouseButtons.Left)
             {
                 var theFormPosition = PointToClient(MousePosition);
                 theFormPosition.X -= pMousePosition.X;
 
-                if (theFormPosition.X > Width - Beat.Width)
-                    theFormPosition.X = Width - Beat.Width;
+                if (theFormPosition.X > Width - Thumb.Width)
+                    theFormPosition.X = Width - Thumb.Width;
 
                 if (theFormPosition.X < 0)
                     theFormPosition.X = 0;
 
-                Beat.Left = theFormPosition.X;
+                Thumb.Left = theFormPosition.X;
+                Thumb.Refresh();
 
-                _TrackBarValue = (int)(theFormPosition.X / (float)(ClientSize.Width - Beat.Width) * 100);
+                _value = (int)(theFormPosition.X / (float)(ClientSize.Width - Thumb.Width) * 100);
                 if (TrackBarValueChanged != null)
                     TrackBarValueChanged(this, null);
             }
-        }
-
-        private void Dragger_MouseEnter(object sender, EventArgs e)
-        {
-            if (!Mute)
-                Beat.BackColor = SystemColors.GrayText;
-        }
-
-        private void Dragger_MouseLeave(object sender, EventArgs e)
-        {
-            if (!Mute)
-                Beat.BackColor = SystemColors.ControlDark;
         }
         
         private void lblGraph_MouseDown(object sender, MouseEventArgs e)
@@ -138,15 +129,15 @@ namespace AudioSwitch
             if (e.Button == MouseButtons.Left)
             {
                 var theFormPosition = PointToClient(MousePosition);
-                theFormPosition.X -= Beat.Width/2;
+                theFormPosition.X -= Thumb.Width / 2;
 
-                if (theFormPosition.X > Width - Beat.Width)
-                    theFormPosition.X = Width - Beat.Width;
+                if (theFormPosition.X > Width - Thumb.Width)
+                    theFormPosition.X = Width - Thumb.Width;
 
                 if (theFormPosition.X < 0)
                     theFormPosition.X = 0;
 
-                Beat.Left = theFormPosition.X;
+                Thumb.Left = theFormPosition.X;
 
                 Moving = true;
             }
@@ -163,17 +154,17 @@ namespace AudioSwitch
             if (Moving && e.Button == MouseButtons.Left)
             {
                 var theFormPosition = PointToClient(MousePosition);
-                theFormPosition.X -= Beat.Width / 2;
+                theFormPosition.X -= Thumb.Width / 2;
 
-                if (theFormPosition.X > Width - Beat.Width)
-                    theFormPosition.X = Width - Beat.Width;
+                if (theFormPosition.X > Width - Thumb.Width)
+                    theFormPosition.X = Width - Thumb.Width;
 
                 if (theFormPosition.X < 0)
                     theFormPosition.X = 0;
 
-                Beat.Left = theFormPosition.X;
+                Thumb.Left = theFormPosition.X;
 
-                _TrackBarValue = (int)(theFormPosition.X / (float)(ClientSize.Width - Beat.Width) * 100);
+                _value = (int)(theFormPosition.X / (float)(ClientSize.Width - Thumb.Width) * 100);
                 if (TrackBarValueChanged != null)
                     TrackBarValueChanged(this, null);
             }
@@ -182,6 +173,26 @@ namespace AudioSwitch
         private void lblGraph_MouseUp(object sender, MouseEventArgs e)
         {
             Moving = false;
+        }
+
+        private void Thumb_Move(object sender, EventArgs e)
+        {
+            Thumb.Refresh();
+            lblGraph.Refresh();
+        }
+
+        private void Thumb_MouseEnter(object sender, EventArgs e)
+        {
+            if (_mute) return;
+            Thumb.Image.Dispose();
+            Thumb.Image = Resources.ThumbHover;
+        }
+
+        private void Thumb_MouseLeave(object sender, EventArgs e)
+        {
+            if (_mute) return;
+            Thumb.Image.Dispose();
+            Thumb.Image = Resources.ThumbNormal;
         }
     }
 }

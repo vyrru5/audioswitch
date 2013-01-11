@@ -85,7 +85,7 @@ namespace AudioSwitch
             // tbMaster
             // 
             this.tbMaster.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbMaster.Location = new System.Drawing.Point(11, 202);
+            this.tbMaster.Location = new System.Drawing.Point(12, 202);
             this.tbMaster.Mute = false;
             this.tbMaster.Name = "tbMaster";
             this.tbMaster.Size = new System.Drawing.Size(196, 21);
