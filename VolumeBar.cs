@@ -5,14 +5,8 @@ using AudioSwitch.Properties;
 
 namespace AudioSwitch
 {
-    public partial class ProgressTrackBar : UserControl
+    public partial class VolumeBar : UserControl
     {
-        private readonly Label[] pgLeft;
-        private readonly Label[] pgRight;
-
-        private readonly Color[] pgOnColors;
-        private readonly Color[] pgOffColors;
-
         public EventHandler TrackBarValueChanged;
         public EventHandler MuteChanged;
 
@@ -42,37 +36,9 @@ namespace AudioSwitch
             }
         }
 
-        public ProgressTrackBar()
+        public VolumeBar()
         {
             InitializeComponent();
-
-            pgLeft = new[] { new Label(), l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13 };
-            pgRight = new[] { new Label(), r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13 };
-            pgOnColors = new[]
-                             {
-                                 Color.Black, Color.Lime, Color.Lime, Color.Lime, Color.Lime,
-                                 Color.Lime, Color.Lime, Color.Lime, Color.Lime, Color.Lime,
-                                 Color.Yellow, Color.Yellow, Color.Yellow, Color.Red
-                             };
-
-            pgOffColors = new[]
-                             {
-                                 Color.Black, Color.Green, Color.Green, Color.Green, Color.Green,
-                                 Color.Green, Color.Green, Color.Green, Color.Green, Color.Green,
-                                 Color.Olive, Color.Olive, Color.Olive, Color.Maroon
-                             };
-        }
-
-        public void SetLeftChannel(byte value)
-        {
-            for (byte i = 0; i < 14; i++)
-                pgLeft[i].BackColor = value >= i ? pgOnColors[i] : pgOffColors[i];
-        }
-
-        public void SetRightChannel(byte value)
-        {
-            for (byte i = 0; i < 14; i++)
-                pgRight[i].BackColor = value >= i ? pgOnColors[i] : pgOffColors[i];
         }
 
         private void MoveThumb()

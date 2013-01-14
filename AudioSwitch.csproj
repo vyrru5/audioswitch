@@ -184,12 +184,18 @@
     <Compile Include="FormSwitcher.Designer.cs">
       <DependentUpon>FormSwitcher.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="ProgressTrackBar.cs">
+    <Compile Include="LedBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ProgressTrackBar.designer.cs">
-      <DependentUpon>ProgressTrackBar.cs</DependentUpon>
+    <Compile Include="LedBar.Designer.cs">
+      <DependentUpon>LedBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="VolumeBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VolumeBar.designer.cs">
+      <DependentUpon>VolumeBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -203,8 +209,11 @@
     <EmbeddedResource Include="FormSwitcher.resx">
       <DependentUpon>FormSwitcher.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProgressTrackBar.resx">
-      <DependentUpon>ProgressTrackBar.cs</DependentUpon>
+    <EmbeddedResource Include="LedBar.resx">
+      <DependentUpon>LedBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VolumeBar.resx">
+      <DependentUpon>VolumeBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

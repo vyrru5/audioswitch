@@ -6,9 +6,9 @@ namespace AudioSwitch.CoreAudioApi
 {
     internal class VolEventsHandler : IAudioSessionEvents
     {
-        private readonly ProgressTrackBar volumebar;
+        private readonly VolumeBar volumebar;
 
-        public VolEventsHandler(ProgressTrackBar VolumeBar)
+        public VolEventsHandler(VolumeBar VolumeBar)
         {
             volumebar = VolumeBar;
         }
