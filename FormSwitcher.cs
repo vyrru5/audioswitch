@@ -21,7 +21,20 @@ namespace AudioSwitch
         private static List<string> DeviceList = new List<string>();
         private static int CurrentDevice;
         private static EDataFlow RenderType = EDataFlow.eRender;
-        
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg != 132)
+                base.WndProc(ref m);
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            ShowInTaskbar = false;
+            Hide();
+            base.OnLoad(e);
+        }
+
         public FormSwitcher()
         {
             InitializeComponent();
@@ -34,66 +47,12 @@ namespace AudioSwitch
             RefreshDevices(false);
             AddVolControls();
 
-            Volume.TrackBarValueChanged += tbMaster_TrackBarValueChanged;
+            Volume.TrackBarValueChanged += Volume_TrackBarValueChanged;
             Volume.MuteChanged += MuteChanged;
-            listView1.ItemSelectionChanged += DeviceListOnSelectionChanged;
+            listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
         }
 
-        private void RefreshDevices(bool UpdateListView)
-        {
-            DeviceList = EndPoints.GetDevices(RenderType);
-            if (DeviceList.Count == 0) return;
-
-            CurrentDevice = EndPoints.GetDefaultDevice(RenderType);
-            if (!UpdateListView) return;
-            
-            listView1.BeginUpdate();
-            listView1.Clear();
-
-            if (listView1.LargeImageList != null)
-                listView1.LargeImageList.Dispose();
-
-            var LargeImageList = new ImageList
-            {
-                ImageSize = new Size(32, 32),
-                ColorDepth = ColorDepth.Depth32Bit
-            };
-
-            for (var i = 0; i < DeviceList.Count; i++)
-            {
-                var iconAdr = EndPoints.Icons[i].Split(',');
-                var hIconEx = new IntPtr[1];
-                ExtractIconEx(iconAdr[0], int.Parse(iconAdr[1]), hIconEx, null, 1);
-                LargeImageList.Images.Add(Icon.FromHandle(hIconEx[0]));
-
-                var item = new ListViewItem { ImageIndex = i, Text = DeviceList[i] };
-                listView1.Items.Add(item);
-            }
-            if (DeviceList.Count > 0)
-                listView1.Items[CurrentDevice].Selected = true;
-
-            listView1.LargeImageList = LargeImageList;
-            listView1.EndUpdate();
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg != 132)
-                base.WndProc(ref m);
-        }
-
-        private void DeviceListOnSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            if (e.IsSelected && CurrentDevice != e.ItemIndex)
-            {
-                CurrentDevice = e.ItemIndex;
-                EndPoints.SetDefaultDevice(CurrentDevice, RenderType);
-                RemoveVolControls();
-                AddVolControls();
-            }
-        }
-
-        private void OnDeactivated(object sender, EventArgs e)
+        private void FormSwitcher_Deactivate(object sender, EventArgs e)
         {
             Hide();
             timer1.Enabled = false;
@@ -103,11 +62,10 @@ namespace AudioSwitch
             AddVolControls();
         }
 
-        protected override void OnLoad(EventArgs e)
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
-            ShowInTaskbar = false;
-            Hide();
-            base.OnLoad(e);
+            using (var pen = new Pen(SystemColors.ScrollBar))
+                e.Graphics.DrawLine(pen, 0, 0, pictureBox1.Width, 0);
         }
 
         private void notifyIcon1_MouseDown(object sender, MouseEventArgs e)
@@ -173,6 +131,76 @@ namespace AudioSwitch
             AddVolControls();
         }
 
+        private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected && CurrentDevice != e.ItemIndex)
+            {
+                CurrentDevice = e.ItemIndex;
+                EndPoints.SetDefaultDevice(CurrentDevice, RenderType);
+                RemoveVolControls();
+                AddVolControls();
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            ledLeft.SetValue(VolumeDevice.AudioMeterInformation.PeakValues[0]);
+            ledRight.SetValue(VolumeDevice.AudioMeterInformation.PeakValues[1]);
+
+            if (!listView1.Focused)
+                listView1.Focus();
+        }
+
+        private void Volume_TrackBarValueChanged(object sender, EventArgs eventArgs)
+        {
+            if (VolumeDevice == null)
+                return;
+
+            VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar = Volume.Value / 100.0f;
+            SetIcon();
+        }
+
+
+
+        // ************* .oO(Functions)Oo. *************           
+
+        private void RefreshDevices(bool UpdateListView)
+        {
+            DeviceList = EndPoints.GetDevices(RenderType);
+            if (DeviceList.Count == 0) return;
+
+            CurrentDevice = EndPoints.GetDefaultDevice(RenderType);
+            if (!UpdateListView) return;
+
+            listView1.BeginUpdate();
+            listView1.Clear();
+
+            if (listView1.LargeImageList != null)
+                listView1.LargeImageList.Dispose();
+
+            var LargeImageList = new ImageList
+            {
+                ImageSize = new Size(32, 32),
+                ColorDepth = ColorDepth.Depth32Bit
+            };
+
+            for (var i = 0; i < DeviceList.Count; i++)
+            {
+                var iconAdr = EndPoints.Icons[i].Split(',');
+                var hIconEx = new IntPtr[1];
+                ExtractIconEx(iconAdr[0], int.Parse(iconAdr[1]), hIconEx, null, 1);
+                LargeImageList.Images.Add(Icon.FromHandle(hIconEx[0]));
+
+                var item = new ListViewItem { ImageIndex = i, Text = DeviceList[i] };
+                listView1.Items.Add(item);
+            }
+            if (DeviceList.Count > 0)
+                listView1.Items[CurrentDevice].Selected = true;
+
+            listView1.LargeImageList = LargeImageList;
+            listView1.EndUpdate();
+        }
+
         private void RemoveVolControls()
         {
             if (DeviceList.Count == 0) return;
@@ -209,30 +237,6 @@ namespace AudioSwitch
                 Volume.Mute = data.Muted;
                 SetIcon();
             }
-        }
-
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            using (var pen = new Pen(SystemColors.ScrollBar))
-                e.Graphics.DrawLine(pen, 0, 0, pictureBox1.Width, 0);
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            ledLeft.SetValue((byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[0] * 14));
-            ledRight.SetValue((byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[1] * 14));
-
-            if (!listView1.Focused)
-                listView1.Focus();
-        }
-
-        private void tbMaster_TrackBarValueChanged(object sender, EventArgs eventArgs)
-        {
-            if (VolumeDevice == null)
-                return;
-
-            VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar = Volume.Value / 100.0f;
-            SetIcon();
         }
 
         private void MuteChanged(object sender, EventArgs eventArgs)
