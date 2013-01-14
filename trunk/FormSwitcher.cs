@@ -21,15 +21,12 @@ namespace AudioSwitch
         private static List<string> DeviceList = new List<string>();
         private static int CurrentDevice;
         private static EDataFlow RenderType = EDataFlow.eRender;
-
-        private byte lastL;
-        private byte lastR;
         
         public FormSwitcher()
         {
             InitializeComponent();
             SetWindowTheme(listView1.Handle, "explorer", null);
-            volEvents = new VolEventsHandler(tbMaster);
+            volEvents = new VolEventsHandler(Volume);
         }
 
         private void FormSwitcher_Load(object sender, EventArgs e)
@@ -37,8 +34,8 @@ namespace AudioSwitch
             RefreshDevices(false);
             AddVolControls();
 
-            tbMaster.TrackBarValueChanged += tbMaster_TrackBarValueChanged;
-            tbMaster.MuteChanged += MuteChanged;
+            Volume.TrackBarValueChanged += tbMaster_TrackBarValueChanged;
+            Volume.MuteChanged += MuteChanged;
             listView1.ItemSelectionChanged += DeviceListOnSelectionChanged;
         }
 
@@ -129,12 +126,12 @@ namespace AudioSwitch
                 RefreshDevices(false);
                 AddVolControls();
                 VolumeDevice.AudioEndpointVolume.Mute = !VolumeDevice.AudioEndpointVolume.Mute;
-                tbMaster.Mute = VolumeDevice.AudioEndpointVolume.Mute;
+                Volume.Mute = VolumeDevice.AudioEndpointVolume.Mute;
                 RemoveVolControls();
 
                 if (RenderType == EDataFlow.eCapture)
                 {
-                    var mutetxt = string.Format("Device {0}muted", tbMaster.Mute ? "" : "un");
+                    var mutetxt = string.Format("Device {0}muted", Volume.Mute ? "" : "un");
                     notifyIcon1.ShowBalloonTip(0, mutetxt, DeviceList[CurrentDevice], ToolTipIcon.Info);
                 }
                 
@@ -193,8 +190,8 @@ namespace AudioSwitch
             if (DeviceList.Count == 0) return;
             
             VolumeDevice = EndPoints.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
-            tbMaster.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
-            tbMaster.Mute = VolumeDevice.AudioEndpointVolume.Mute;
+            Volume.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
+            Volume.Mute = VolumeDevice.AudioEndpointVolume.Mute;
             VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
             VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
             SetIcon();
@@ -207,9 +204,9 @@ namespace AudioSwitch
                        new object[] {data});
             else
             {
-                if (!tbMaster.Moving)
-                    tbMaster.Value = (int) (data.MasterVolume*100);
-                tbMaster.Mute = data.Muted;
+                if (!Volume.Moving)
+                    Volume.Value = (int) (data.MasterVolume*100);
+                Volume.Mute = data.Muted;
                 SetIcon();
             }
         }
@@ -222,49 +219,39 @@ namespace AudioSwitch
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            var newL = (byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[0] * 14);
-            var newR = (byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[1] * 14);
+            ledLeft.SetValue((byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[0] * 14));
+            ledRight.SetValue((byte)Math.Ceiling(VolumeDevice.AudioMeterInformation.PeakValues[1] * 14));
 
-            if (lastL != newL)
-            {
-                tbMaster.SetLeftChannel(newL);
-                lastL = newL;
-            }
-            if (lastR != newR)
-            {
-                tbMaster.SetRightChannel(newR);
-                lastR = newR;
-            }
+            if (!listView1.Focused)
+                listView1.Focus();
         }
 
         private void tbMaster_TrackBarValueChanged(object sender, EventArgs eventArgs)
         {
             if (VolumeDevice == null)
                 return;
-            if (VolumeDevice.AudioEndpointVolume.Mute)
-                VolumeDevice.AudioEndpointVolume.Mute = false;
 
-            VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar = tbMaster.Value / 100.0f;
+            VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar = Volume.Value / 100.0f;
             SetIcon();
         }
 
         private void MuteChanged(object sender, EventArgs eventArgs)
         {
-            VolumeDevice.AudioEndpointVolume.Mute = tbMaster.Mute;
+            VolumeDevice.AudioEndpointVolume.Mute = Volume.Mute;
             SetIcon();
         }
 
         private void SetIcon()
         {
-            if (tbMaster.Mute)
+            if (Volume.Mute)
                 notifyIcon1.Icon = Resources.mute;
-            else if (tbMaster.Value == 0)
+            else if (Volume.Value == 0)
                 notifyIcon1.Icon = Resources._0_25;
-            else if (tbMaster.Value > 0 && tbMaster.Value < 33)
+            else if (Volume.Value > 0 && Volume.Value < 33)
                 notifyIcon1.Icon = Resources._25_50;
-            else if (tbMaster.Value > 33 && tbMaster.Value < 66)
+            else if (Volume.Value > 33 && Volume.Value < 66)
                 notifyIcon1.Icon = Resources._50_75;
-            else if (tbMaster.Value > 66 && tbMaster.Value <= 100)
+            else if (Volume.Value > 66 && Volume.Value <= 100)
                 notifyIcon1.Icon = Resources._75_100;
         }
     }

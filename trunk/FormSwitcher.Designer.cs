@@ -42,7 +42,9 @@ namespace AudioSwitch
             this.listView1 = new System.Windows.Forms.ListView();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.tbMaster = new AudioSwitch.ProgressTrackBar();
+            this.ledRight = new AudioSwitch.LedBar();
+            this.ledLeft = new AudioSwitch.LedBar();
+            this.Volume = new AudioSwitch.VolumeBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -82,21 +84,44 @@ namespace AudioSwitch
             this.timer1.Interval = 1;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // tbMaster
+            // ledRight
             // 
-            this.tbMaster.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbMaster.Location = new System.Drawing.Point(12, 202);
-            this.tbMaster.Mute = false;
-            this.tbMaster.Name = "tbMaster";
-            this.tbMaster.Size = new System.Drawing.Size(196, 21);
-            this.tbMaster.TabIndex = 7;
-            this.tbMaster.Value = 0;
+            this.ledRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ledRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.ledRight.Location = new System.Drawing.Point(12, 219);
+            this.ledRight.Name = "ledRight";
+            this.ledRight.Size = new System.Drawing.Size(196, 5);
+            this.ledRight.TabIndex = 9;
+            this.ledRight.TabStop = false;
+            // 
+            // ledLeft
+            // 
+            this.ledLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ledLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.ledLeft.Location = new System.Drawing.Point(12, 203);
+            this.ledLeft.Name = "ledLeft";
+            this.ledLeft.Size = new System.Drawing.Size(196, 5);
+            this.ledLeft.TabIndex = 8;
+            this.ledLeft.TabStop = false;
+            // 
+            // Volume
+            // 
+            this.Volume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Volume.Location = new System.Drawing.Point(12, 209);
+            this.Volume.Mute = false;
+            this.Volume.Name = "Volume";
+            this.Volume.Size = new System.Drawing.Size(196, 10);
+            this.Volume.TabIndex = 7;
+            this.Volume.TabStop = false;
+            this.Volume.Value = 0;
             // 
             // FormSwitcher
             // 
             this.ClientSize = new System.Drawing.Size(220, 234);
             this.ControlBox = false;
-            this.Controls.Add(this.tbMaster);
+            this.Controls.Add(this.ledRight);
+            this.Controls.Add(this.ledLeft);
+            this.Controls.Add(this.Volume);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.listView1);
             this.MaximizeBox = false;
@@ -114,6 +139,8 @@ namespace AudioSwitch
 
         private PictureBox pictureBox1;
         private Timer timer1;
-        private ProgressTrackBar tbMaster;
+        private VolumeBar Volume;
+        private LedBar ledLeft;
+        private LedBar ledRight;
     }
 }
