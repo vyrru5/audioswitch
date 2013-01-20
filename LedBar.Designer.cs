@@ -167,6 +167,7 @@
             this.lon1.Name = "lon1";
             this.lon1.Size = new System.Drawing.Size(14, 3);
             this.lon1.TabIndex = 39;
+            this.lon1.Visible = false;
             // 
             // lon2
             // 
@@ -175,6 +176,7 @@
             this.lon2.Name = "lon2";
             this.lon2.Size = new System.Drawing.Size(14, 3);
             this.lon2.TabIndex = 40;
+            this.lon2.Visible = false;
             // 
             // lon3
             // 
@@ -183,6 +185,7 @@
             this.lon3.Name = "lon3";
             this.lon3.Size = new System.Drawing.Size(14, 3);
             this.lon3.TabIndex = 41;
+            this.lon3.Visible = false;
             // 
             // lon4
             // 
@@ -191,6 +194,7 @@
             this.lon4.Name = "lon4";
             this.lon4.Size = new System.Drawing.Size(14, 3);
             this.lon4.TabIndex = 42;
+            this.lon4.Visible = false;
             // 
             // lon5
             // 
@@ -199,6 +203,7 @@
             this.lon5.Name = "lon5";
             this.lon5.Size = new System.Drawing.Size(14, 3);
             this.lon5.TabIndex = 43;
+            this.lon5.Visible = false;
             // 
             // lon6
             // 
@@ -207,6 +212,7 @@
             this.lon6.Name = "lon6";
             this.lon6.Size = new System.Drawing.Size(14, 3);
             this.lon6.TabIndex = 44;
+            this.lon6.Visible = false;
             // 
             // lon7
             // 
@@ -215,6 +221,7 @@
             this.lon7.Name = "lon7";
             this.lon7.Size = new System.Drawing.Size(14, 3);
             this.lon7.TabIndex = 45;
+            this.lon7.Visible = false;
             // 
             // lon8
             // 
@@ -223,6 +230,7 @@
             this.lon8.Name = "lon8";
             this.lon8.Size = new System.Drawing.Size(14, 3);
             this.lon8.TabIndex = 46;
+            this.lon8.Visible = false;
             // 
             // lon9
             // 
@@ -231,6 +239,7 @@
             this.lon9.Name = "lon9";
             this.lon9.Size = new System.Drawing.Size(14, 3);
             this.lon9.TabIndex = 47;
+            this.lon9.Visible = false;
             // 
             // lon10
             // 
@@ -239,6 +248,7 @@
             this.lon10.Name = "lon10";
             this.lon10.Size = new System.Drawing.Size(14, 3);
             this.lon10.TabIndex = 48;
+            this.lon10.Visible = false;
             // 
             // lon11
             // 
@@ -247,6 +257,7 @@
             this.lon11.Name = "lon11";
             this.lon11.Size = new System.Drawing.Size(14, 3);
             this.lon11.TabIndex = 49;
+            this.lon11.Visible = false;
             // 
             // lon12
             // 
@@ -255,6 +266,7 @@
             this.lon12.Name = "lon12";
             this.lon12.Size = new System.Drawing.Size(14, 3);
             this.lon12.TabIndex = 50;
+            this.lon12.Visible = false;
             // 
             // lon13
             // 
@@ -263,6 +275,7 @@
             this.lon13.Name = "lon13";
             this.lon13.Size = new System.Drawing.Size(14, 3);
             this.lon13.TabIndex = 51;
+            this.lon13.Visible = false;
             // 
             // LedBar
             // 
