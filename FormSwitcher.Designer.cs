@@ -8,7 +8,7 @@ namespace AudioSwitch
 {
     partial class FormSwitcher
     {
-        private ListView listView1;
+        private CustomListView listView1;
         private NotifyIcon notifyIcon1;
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace AudioSwitch
         {
             this.components = new System.ComponentModel.Container();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listView1 = new AudioSwitch.CustomListView();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.ledRight = new AudioSwitch.LedBar();
@@ -63,7 +63,7 @@ namespace AudioSwitch
             this.listView1.Location = new System.Drawing.Point(1, -1);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(222, 380);
+            this.listView1.Size = new System.Drawing.Size(222, 437);
             this.listView1.TabIndex = 0;
             this.listView1.TileSize = new System.Drawing.Size(222, 40);
             this.listView1.UseCompatibleStateImageBehavior = false;

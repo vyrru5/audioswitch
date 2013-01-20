@@ -177,6 +177,9 @@
     <Compile Include="CoreAudioApi\VolEventsHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CustomListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="EndPoints.cs" />
     <Compile Include="FormSwitcher.cs">
       <SubType>Form</SubType>
@@ -206,6 +209,9 @@
     <Compile Include="WindowPosition.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CustomListView.resx">
+      <DependentUpon>CustomListView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormSwitcher.resx">
       <DependentUpon>FormSwitcher.cs</DependentUpon>
     </EmbeddedResource>
@@ -224,6 +230,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\appicon.ico" />
+    <None Include="Resources\defaultDevice.png" />
     <None Include="Resources\ThumbHover.png" />
     <None Include="Resources\ThumbMute.png" />
     <None Include="Resources\ThumbNormal.png" />

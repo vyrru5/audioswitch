@@ -25,8 +25,8 @@ namespace AudioSwitch
             }
         }
 
-        private int _value;
-        public int Value
+        private float _value;
+        public float Value
         {
             get { return _value; }
             set
@@ -43,9 +43,8 @@ namespace AudioSwitch
 
         private void MoveThumb()
         {
-            var trackDistance = ClientSize.Width - Thumb.Width;
-            var fractionMoved = (float)_value / 100;
-            Thumb.Left = (int)(fractionMoved * trackDistance);
+            var trackStep = (double)(ClientSize.Width - Thumb.Width);
+            Thumb.Left = (int)(_value * trackStep);
         }
 
         private void Thumb_MouseDown(object sender, MouseEventArgs e)
@@ -84,7 +83,9 @@ namespace AudioSwitch
                 Thumb.Left = theFormPosition.X;
                 Thumb.Refresh();
 
-                _value = (int)(theFormPosition.X / (float)(ClientSize.Width - Thumb.Width) * 100);
+                var trackStep = (float)(ClientSize.Width - Thumb.Width);
+                _value = Thumb.Left / trackStep;
+
                 if (TrackBarValueChanged != null)
                     TrackBarValueChanged(this, null);
             }
@@ -130,7 +131,9 @@ namespace AudioSwitch
 
                 Thumb.Left = theFormPosition.X;
 
-                _value = (int)(theFormPosition.X / (float)(ClientSize.Width - Thumb.Width) * 100);
+                var trackStep = (float)(ClientSize.Width - Thumb.Width);
+                _value = Thumb.Left / trackStep;
+
                 if (TrackBarValueChanged != null)
                     TrackBarValueChanged(this, null);
             }

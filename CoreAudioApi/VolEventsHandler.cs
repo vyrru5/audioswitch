@@ -21,7 +21,7 @@ namespace AudioSwitch.CoreAudioApi
                 volumebar.Invoke(new MethodWithFloatArg(SafeSet), Volume, Mute);
             else
             {
-                volumebar.Value = (int)(Volume * 100);
+                volumebar.Value = Volume;
                 volumebar.Mute = Mute;
             }
         }

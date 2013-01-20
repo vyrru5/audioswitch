@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AudioSwitch.CoreAudioApi;
@@ -16,11 +17,26 @@ namespace AudioSwitch
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         private static extern int SetWindowTheme(IntPtr hWnd, string appName, string partList);
 
+        private static readonly ImageList NormalIcons = new ImageList
+        {
+            ImageSize = new Size(32, 32),
+            ColorDepth = ColorDepth.Depth32Bit
+        };
+
+        private static readonly ImageList DefaultIcons = new ImageList
+        {
+            ImageSize = new Size(32, 32),
+            ColorDepth = ColorDepth.Depth32Bit
+        };
+
         private readonly VolEventsHandler volEvents;
         private static MMDevice VolumeDevice;
         private static List<string> DeviceList = new List<string>();
         private static int CurrentDevice;
         private static EDataFlow RenderType = EDataFlow.eRender;
+
+        private static DateTime LastScroll = DateTime.Now;
+        private static readonly TimeSpan ShortInterval = new TimeSpan(0, 0, 0, 0, 70);
 
         protected override void WndProc(ref Message m)
         {
@@ -50,6 +66,12 @@ namespace AudioSwitch
             Volume.TrackBarValueChanged += Volume_TrackBarValueChanged;
             Volume.MuteChanged += MuteChanged;
             listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
+            listView1.Scroll += listView1_Scroll;
+            listView1.LargeImageList = new ImageList
+            {
+                ImageSize = new Size(32, 32),
+                ColorDepth = ColorDepth.Depth32Bit
+            };
         }
 
         private void FormSwitcher_Deactivate(object sender, EventArgs e)
@@ -133,13 +155,25 @@ namespace AudioSwitch
 
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
+            listView1.BeginUpdate();
+
+            if (!e.IsSelected)
+            {
+                listView1.LargeImageList.Images[CurrentDevice].Dispose();
+                listView1.LargeImageList.Images[CurrentDevice] = NormalIcons.Images[CurrentDevice];
+            }
             if (e.IsSelected && CurrentDevice != e.ItemIndex)
             {
                 CurrentDevice = e.ItemIndex;
                 EndPoints.SetDefaultDevice(CurrentDevice, RenderType);
                 RemoveVolControls();
                 AddVolControls();
+
+                listView1.LargeImageList.Images[CurrentDevice].Dispose();
+                listView1.LargeImageList.Images[CurrentDevice] = DefaultIcons.Images[CurrentDevice];
             }
+
+            listView1.EndUpdate();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -156,11 +190,29 @@ namespace AudioSwitch
             if (VolumeDevice == null)
                 return;
 
-            VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar = Volume.Value / 100.0f;
+            VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar = Volume.Value;
             SetIcon();
         }
 
+        private void listView1_Scroll(object sender, ScrollEventArgs e)
+        {
+            var amount = DateTime.Now - LastScroll <= ShortInterval ? 0.10f : 0.05f;
+            LastScroll = DateTime.Now;
 
+            if (e.NewValue > 0)
+                if (Volume.Value <= 1 - amount)
+                    Volume.Value += amount;
+                else
+                    Volume.Value = 1;
+
+            else if (e.NewValue < 0)
+                if (Volume.Value >= amount)
+                    Volume.Value -= amount;
+                else
+                    Volume.Value = 0;
+
+            Volume_TrackBarValueChanged(null, null);
+        }
 
         // ************* .oO(Functions)Oo. *************           
 
@@ -173,32 +225,50 @@ namespace AudioSwitch
             if (!UpdateListView) return;
 
             listView1.BeginUpdate();
+
             listView1.Clear();
-
-            if (listView1.LargeImageList != null)
-                listView1.LargeImageList.Dispose();
-
-            var LargeImageList = new ImageList
-            {
-                ImageSize = new Size(32, 32),
-                ColorDepth = ColorDepth.Depth32Bit
-            };
+            listView1.LargeImageList.Images.Clear();
+            NormalIcons.Images.Clear();
+            DefaultIcons.Images.Clear();
+            var hIconEx = new IntPtr[1];
 
             for (var i = 0; i < DeviceList.Count; i++)
             {
                 var iconAdr = EndPoints.Icons[i].Split(',');
-                var hIconEx = new IntPtr[1];
                 ExtractIconEx(iconAdr[0], int.Parse(iconAdr[1]), hIconEx, null, 1);
-                LargeImageList.Images.Add(Icon.FromHandle(hIconEx[0]));
+                var icon = Icon.FromHandle(hIconEx[0]);
+                listView1.LargeImageList.Images.Add(icon);
+                NormalIcons.Images.Add(icon);
+                DefaultIcons.Images.Add(AddOverlay(icon, Resources.defaultDevice));
 
                 var item = new ListViewItem { ImageIndex = i, Text = DeviceList[i] };
                 listView1.Items.Add(item);
             }
-            if (DeviceList.Count > 0)
-                listView1.Items[CurrentDevice].Selected = true;
 
-            listView1.LargeImageList = LargeImageList;
+            if (DeviceList.Count > 0)
+            {
+                listView1.Items[CurrentDevice].Selected = true;
+                listView1.LargeImageList.Images[CurrentDevice].Dispose();
+                listView1.LargeImageList.Images[CurrentDevice] = DefaultIcons.Images[CurrentDevice];
+            }
+
             listView1.EndUpdate();
+        }
+
+        private static Image AddOverlay(Icon originalIcon, Image overlay)
+        {
+            using (Image original = originalIcon.ToBitmap())
+            {
+                var bitmap = new Bitmap(originalIcon.Width, originalIcon.Height);
+                using (var canvas = Graphics.FromImage(bitmap))
+                {
+                    canvas.CompositingQuality = CompositingQuality.HighQuality;
+                    canvas.DrawImage(original, 0, 0);
+                    canvas.DrawImage(overlay, 0, 0);
+                    canvas.Save();
+                    return bitmap;
+                }
+            }
         }
 
         private void RemoveVolControls()
@@ -218,7 +288,7 @@ namespace AudioSwitch
             if (DeviceList.Count == 0) return;
             
             VolumeDevice = EndPoints.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
-            Volume.Value = (int)(VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100);
+            Volume.Value = VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar;
             Volume.Mute = VolumeDevice.AudioEndpointVolume.Mute;
             VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
             VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
@@ -233,7 +303,7 @@ namespace AudioSwitch
             else
             {
                 if (!Volume.Moving)
-                    Volume.Value = (int) (data.MasterVolume*100);
+                    Volume.Value = data.MasterVolume;
                 Volume.Mute = data.Muted;
                 SetIcon();
             }
@@ -251,11 +321,11 @@ namespace AudioSwitch
                 notifyIcon1.Icon = Resources.mute;
             else if (Volume.Value == 0)
                 notifyIcon1.Icon = Resources._0_25;
-            else if (Volume.Value > 0 && Volume.Value < 33)
+            else if (Volume.Value > 0 && Volume.Value < 0.33)
                 notifyIcon1.Icon = Resources._25_50;
-            else if (Volume.Value > 33 && Volume.Value < 66)
+            else if (Volume.Value > 0.33 && Volume.Value < 0.66)
                 notifyIcon1.Icon = Resources._50_75;
-            else if (Volume.Value > 66 && Volume.Value <= 100)
+            else if (Volume.Value > 0.66 && Volume.Value <= 1)
                 notifyIcon1.Icon = Resources._75_100;
         }
     }
