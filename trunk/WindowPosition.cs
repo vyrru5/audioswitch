@@ -140,8 +140,8 @@ namespace AudioSwitch
 
         public static Point GetWindowPosition(NotifyIcon notifyicon, int windowwidth, int windowheight)
         {
-            int num;
-            int num2;
+            int left;
+            int top;
             var tBarInf = GetTaskBarInfo();
             var iconRect = GetNotifyIconRectangle(notifyicon);
             var point = new Point(iconRect.Left + iconRect.Width / 2, iconRect.Top + iconRect.Height / 2);
@@ -150,48 +150,53 @@ namespace AudioSwitch
             switch (tBarInf.Alignment)
             {
                 case TaskBarAlignment.Top:
-                    num = point.X - windowwidth / 2;
-                    num2 = !flag ? tBarInf.Position.Bottom + 8 : iconRect.Bottom + 8;
+                    left = point.X - windowwidth / 2;
+                    top = !flag ? tBarInf.Position.Bottom + 8 : iconRect.Bottom + 8;
                     break;
 
                 case TaskBarAlignment.Left:
                     if (!flag)
                     {
-                        num = tBarInf.Position.Right + 8;
-                        num2 = point.Y - windowheight / 2;
+                        left = tBarInf.Position.Right + 8;
+                        top = point.Y - windowheight / 2;
                     }
                     else
                     {
-                        num = point.X - windowwidth / 2;
-                        num2 = iconRect.Top - windowheight - 8;
+                        left = point.X - windowwidth / 2;
+                        top = iconRect.Top - windowheight - 8;
                     }
                     break;
 
                 case TaskBarAlignment.Right:
                     if (!flag)
                     {
-                        num = tBarInf.Position.Left - windowwidth - 8;
-                        num2 = point.Y - windowheight / 2;
+                        left = tBarInf.Position.Left - windowwidth - 8;
+                        top = point.Y - windowheight / 2;
                     }
                     else
                     {
-                        num = point.X - windowwidth / 2;
-                        num2 = iconRect.Top - windowheight - 8;
+                        left = point.X - windowwidth / 2;
+                        top = iconRect.Top - windowheight - 8;
                     }
                     break;
 
                 default:
-                    num = point.X - (windowwidth / 2);
-                    num2 = flag ? iconRect.Top - windowheight - 8 : tBarInf.Position.Top - windowheight - 8;
+                    left = point.X - windowwidth / 2;
+                    top = flag ? iconRect.Top - windowheight - 8 : tBarInf.Position.Top - windowheight - 8;
                     break;
             }
 
-            if (windowwidth + num > Screen.PrimaryScreen.WorkingArea.Width)
-                num = Screen.PrimaryScreen.WorkingArea.Width - windowwidth;
-            else if (num < 0)
-                num = 0;
+            if (windowwidth + left > Screen.PrimaryScreen.WorkingArea.Width)
+                left = Screen.PrimaryScreen.WorkingArea.Width - windowwidth;
+            else if (left < 0)
+                left = 0;
 
-            return new Point(num, num2);
+            if (windowheight + top > Screen.PrimaryScreen.WorkingArea.Height)
+                top = Screen.PrimaryScreen.WorkingArea.Height - windowheight;
+            else if (top < 0)
+                top = 0;
+
+            return new Point(left, top);
         }
     }
 }
