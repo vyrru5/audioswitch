@@ -13,9 +13,20 @@ namespace AudioSwitch
     {
         [DllImport("Shell32.dll")]
         private static extern int ExtractIconEx(string libName, int iconIndex, IntPtr[] largeIcon, IntPtr[] smallIcon, int nIcons);
-
+        
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         private static extern int SetWindowTheme(IntPtr hWnd, string appName, string partList);
+
+        private readonly VolEventsHandler volEvents;
+        private static MMDevice VolumeDevice;
+        private static List<string> DeviceList = new List<string>();
+        private static int CurrentDevice;
+        private static EDataFlow RenderType = EDataFlow.eRender;
+        private static readonly List<Icon> TrayIcons = new List<Icon>();
+
+        private static DateTime LastScroll = DateTime.Now;
+        private static readonly TimeSpan ShortInterval = new TimeSpan(0, 0, 0, 0, 70);
+        private const int WHEEL_DELTA = 120;
 
         private static readonly ImageList NormalIcons = new ImageList
         {
@@ -28,15 +39,6 @@ namespace AudioSwitch
             ImageSize = new Size(32, 32),
             ColorDepth = ColorDepth.Depth32Bit
         };
-
-        private readonly VolEventsHandler volEvents;
-        private static MMDevice VolumeDevice;
-        private static List<string> DeviceList = new List<string>();
-        private static int CurrentDevice;
-        private static EDataFlow RenderType = EDataFlow.eRender;
-
-        private static DateTime LastScroll = DateTime.Now;
-        private static readonly TimeSpan ShortInterval = new TimeSpan(0, 0, 0, 0, 70);
 
         protected override void WndProc(ref Message m)
         {
@@ -56,7 +58,16 @@ namespace AudioSwitch
             InitializeComponent();
             SetWindowTheme(listView1.Handle, "explorer", null);
             volEvents = new VolEventsHandler(Volume);
+
+            TrayIcons.Add(getIcon(Resources.mute));
+            TrayIcons.Add(getIcon(Resources.zero));
+            TrayIcons.Add(getIcon(Resources._1_33));
+            TrayIcons.Add(getIcon(Resources._33_66));
+            TrayIcons.Add(getIcon(Resources._66_100));
         }
+
+        private static Icon getIcon(Bitmap source)
+        { return Icon.FromHandle(source.GetHicon()); }
 
         private void FormSwitcher_Load(object sender, EventArgs e)
         {
@@ -88,6 +99,11 @@ namespace AudioSwitch
         {
             using (var pen = new Pen(SystemColors.ScrollBar))
                 e.Graphics.DrawLine(pen, 0, 0, pictureBox1.Width, 0);
+        }
+
+        private void notifyIcon1_MouseMove(object sender, MouseEventArgs e)
+        {
+            notifyIcon1.Text = DeviceList[CurrentDevice];
         }
 
         private void notifyIcon1_MouseDown(object sender, MouseEventArgs e)
@@ -196,18 +212,19 @@ namespace AudioSwitch
 
         private void listView1_Scroll(object sender, ScrollEventArgs e)
         {
-            var amount = DateTime.Now - LastScroll <= ShortInterval ? 0.10f : 0.05f;
+            var amount = DateTime.Now - LastScroll <= ShortInterval ? 0.1f : 0.05f;
+            var step = (float)Math.Abs(e.NewValue) / WHEEL_DELTA * amount;
             LastScroll = DateTime.Now;
 
             if (e.NewValue > 0)
-                if (Volume.Value <= 1 - amount)
-                    Volume.Value += amount;
+                if (Volume.Value <= 1 - step)
+                    Volume.Value += step;
                 else
                     Volume.Value = 1;
 
             else if (e.NewValue < 0)
-                if (Volume.Value >= amount)
-                    Volume.Value -= amount;
+                if (Volume.Value >= step)
+                    Volume.Value -= step;
                 else
                     Volume.Value = 0;
 
@@ -318,15 +335,15 @@ namespace AudioSwitch
         private void SetIcon()
         {
             if (Volume.Mute)
-                notifyIcon1.Icon = Resources.mute;
+                notifyIcon1.Icon = TrayIcons[0];
             else if (Volume.Value == 0)
-                notifyIcon1.Icon = Resources._0_25;
+                notifyIcon1.Icon = TrayIcons[1];
             else if (Volume.Value > 0 && Volume.Value < 0.33)
-                notifyIcon1.Icon = Resources._25_50;
+                notifyIcon1.Icon = TrayIcons[2];
             else if (Volume.Value > 0.33 && Volume.Value < 0.66)
-                notifyIcon1.Icon = Resources._50_75;
+                notifyIcon1.Icon = TrayIcons[3];
             else if (Volume.Value > 0.66 && Volume.Value <= 1)
-                notifyIcon1.Icon = Resources._75_100;
+                notifyIcon1.Icon = TrayIcons[4];
         }
     }
 }
