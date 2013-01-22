@@ -151,6 +151,8 @@ namespace AudioSwitch
             {
                 case TaskBarAlignment.Top:
                     left = point.X - windowwidth / 2;
+                    if (left + windowwidth > tBarInf.Position.Width)
+                        left = tBarInf.Position.Width - windowwidth;
                     top = !flag ? tBarInf.Position.Bottom + 8 : iconRect.Bottom + 8;
                     break;
 
@@ -165,6 +167,8 @@ namespace AudioSwitch
                         left = point.X - windowwidth / 2;
                         top = iconRect.Top - windowheight - 8;
                     }
+                    if (top + windowheight > tBarInf.Position.Height)
+                        top = tBarInf.Position.Height - windowheight;
                     break;
 
                 case TaskBarAlignment.Right:
@@ -178,24 +182,17 @@ namespace AudioSwitch
                         left = point.X - windowwidth / 2;
                         top = iconRect.Top - windowheight - 8;
                     }
+                    if (top + windowheight > tBarInf.Position.Height)
+                        top = tBarInf.Position.Height - windowheight;
                     break;
 
                 default:
                     left = point.X - windowwidth / 2;
+                    if (left + windowwidth > tBarInf.Position.Width)
+                        left = tBarInf.Position.Width - windowwidth;
                     top = flag ? iconRect.Top - windowheight - 8 : tBarInf.Position.Top - windowheight - 8;
                     break;
             }
-
-            if (windowwidth + left > Screen.PrimaryScreen.WorkingArea.Width)
-                left = Screen.PrimaryScreen.WorkingArea.Width - windowwidth;
-            else if (left < 0)
-                left = 0;
-
-            if (windowheight + top > Screen.PrimaryScreen.WorkingArea.Height)
-                top = Screen.PrimaryScreen.WorkingArea.Height - windowheight;
-            else if (top < 0)
-                top = 0;
-
             return new Point(left, top);
         }
     }

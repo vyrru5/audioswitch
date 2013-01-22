@@ -452,6 +452,7 @@ namespace AudioSwitch
                 modkeys |= HotModifierKeys.Alt;
             if (modifier.HasFlag(Keys.Shift))
                 modkeys |= HotModifierKeys.Shift;
+            if (ModifierKeys == Keys.None) return;
 
             if (RegisterHotKey(Handle, HotKeyID, (uint) modkeys, (uint) key))
             {
