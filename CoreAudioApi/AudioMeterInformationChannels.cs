@@ -29,26 +29,25 @@ namespace AudioSwitch.CoreAudioApi
     {
         readonly IAudioMeterInformation _AudioMeterInformation;
 
-        private int Count
+        private int _count;
+
+        internal int GetCount()
         {
-            get
-            {
-                int result;
-                Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetMeteringChannelCount(out result));
-                return result;
-            }
+            int result;
+            Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetMeteringChannelCount(out result));
+            return result;
         }
 
-        public float this[int index]
+        internal float[] GetPeaks()
         {
-            get
-            {
-                var peakValues = new float[Count];
-                var Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
-                Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetChannelsPeakValues(peakValues.Length, Params.AddrOfPinnedObject()));
-                Params.Free();
-                return peakValues[index];
-            }
+            if (_count == 0)
+                _count = GetCount();
+
+            var peakValues = new float[_count];
+            var Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
+            Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetChannelsPeakValues(peakValues.Length, Params.AddrOfPinnedObject()));
+            Params.Free();
+            return peakValues;
         }
 
         internal AudioMeterInformationChannels(IAudioMeterInformation parent)
