@@ -24,8 +24,8 @@ namespace AudioSwitch.CoreAudioApi
 {
     public class AudioVolumeNotificationData
     {
-        public bool Muted { get; private set; }
-        public float MasterVolume { get; private set; }
+        public readonly bool Muted;
+        public readonly float MasterVolume;
 
         public AudioVolumeNotificationData(bool muted, float masterVolume)
         {

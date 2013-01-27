@@ -31,11 +31,12 @@ namespace AudioSwitch
         }
 
         private DateTime firstPressed;
+        private readonly TimeSpan pressDuration = new TimeSpan(0, 0, 0, 2);
         private bool isDown;
         private bool isRegd;
         private Keys hotModifierKeys;
         private Keys hotkey;
-        private int HotKeyID;
+        private const int HotKeyID = 875682524;
 
         [DllImport("Shell32.dll")]
         private static extern int ExtractIconEx(string libName, int iconIndex, IntPtr[] largeIcon, IntPtr[] smallIcon, int nIcons);
@@ -57,6 +58,7 @@ namespace AudioSwitch
         private static MMDevice VolumeDevice;
         private static List<string> DeviceList = new List<string>();
         private static int CurrentDevice;
+        private static bool isStereo;
         private static EDataFlow RenderType = EDataFlow.eRender;
         
         private static DateTime LastScroll = DateTime.Now;
@@ -101,7 +103,6 @@ namespace AudioSwitch
 
         private void FormSwitcher_Load(object sender, EventArgs e)
         {
-            HotKeyID = GetHashCode();
             RefreshDevices(false);
             AddVolControls();
 
@@ -159,7 +160,8 @@ namespace AudioSwitch
 
         private void notifyIcon1_MouseMove(object sender, MouseEventArgs e)
         {
-            notifyIcon1.Text = DeviceList[CurrentDevice];
+            var text = DeviceList[CurrentDevice];
+            notifyIcon1.Text = text.Length > 64 ? text.Substring(0, 64) : text;
         }
 
         private void notifyIcon1_MouseDown(object sender, MouseEventArgs e)
@@ -250,8 +252,9 @@ namespace AudioSwitch
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            ledLeft.SetValue(VolumeDevice.AudioMeterInformation.PeakValues[0]);
-            ledRight.SetValue(VolumeDevice.AudioMeterInformation.PeakValues[1]);
+            var peaks = VolumeDevice.AudioMeterInformation.PeakValues.GetPeaks();
+            ledLeft.SetValue(peaks[0]);
+            ledRight.SetValue(peaks[isStereo ? 1 : 0]);
 
             if (!listView1.Focused)
                 listView1.Focus();
@@ -263,7 +266,7 @@ namespace AudioSwitch
                 firstPressed = DateTime.Now;
                 isRegd = true;
             }
-            if (DateTime.Now - firstPressed < new TimeSpan(0, 0, 0, 2)) return;
+            if (DateTime.Now - firstPressed < pressDuration) return;
 
             isDown = false;
             isRegd = false;
@@ -404,6 +407,7 @@ namespace AudioSwitch
             VolumeDevice = EndPoints.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
             Volume.Value = VolumeDevice.AudioEndpointVolume.MasterVolumeLevelScalar;
             Volume.Mute = VolumeDevice.AudioEndpointVolume.Mute;
+            isStereo = VolumeDevice.AudioMeterInformation.PeakValues.GetCount() > 1;
             VolumeDevice.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
             VolumeDevice.AudioEndpointVolume.OnVolumeNotification += VolNotify;
             SetIcon();
@@ -452,7 +456,7 @@ namespace AudioSwitch
                 modkeys |= HotModifierKeys.Alt;
             if (modifier.HasFlag(Keys.Shift))
                 modkeys |= HotModifierKeys.Shift;
-            if (ModifierKeys == Keys.None) return;
+            if (modkeys == 0) return;
 
             if (RegisterHotKey(Handle, HotKeyID, (uint) modkeys, (uint) key))
             {
@@ -466,7 +470,7 @@ namespace AudioSwitch
             else
                 notifyIcon1.ShowBalloonTip(0,
                                            "Hot key registration failed!",
-                                           "Please try again with a different combination.",
+                                           "This combination might be already in use. Please try again with a different combination.",
                                            ToolTipIcon.Error);
         }
     }

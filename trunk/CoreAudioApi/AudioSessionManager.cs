@@ -37,6 +37,6 @@ namespace AudioSwitch.CoreAudioApi
             Sessions = new SessionCollection(_SessionEnum);
         }
 
-        public SessionCollection Sessions { get; private set; }
+        public readonly SessionCollection Sessions;
     }
 }
