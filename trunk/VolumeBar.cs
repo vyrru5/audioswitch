@@ -1,17 +1,24 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using AudioSwitch.CoreAudioApi;
 using AudioSwitch.Properties;
 
 namespace AudioSwitch
 {
     public partial class VolumeBar : UserControl
     {
-        public EventHandler TrackBarValueChanged;
-        public EventHandler MuteChanged;
+        internal EventHandler VolumeMuteChanged;
+        internal MMDevice Device;
+        internal bool Stereo;
 
+        private readonly VolEventsHandler volEvents;
+        private static DateTime LastScroll = DateTime.Now;
+        private static readonly TimeSpan ShortInterval = new TimeSpan(0, 0, 0, 0, 70);
+        private const int WHEEL_DELTA = 120;
+        
         private Point pMousePosition = Point.Empty;
-        public bool Moving;
+        private bool Moving;
 
         private bool _mute;
         public bool Mute
@@ -19,26 +26,45 @@ namespace AudioSwitch
             get { return _mute; }
             set
             {
+                _mute = value;
                 Thumb.Image.Dispose();
                 Thumb.Image = value ? Resources.ThumbMute : Resources.ThumbNormal;
-                _mute = value;
+                if (VolumeMuteChanged != null)
+                    VolumeMuteChanged(this, null);
             }
         }
 
         private float _value;
         public float Value
         {
-            get { return _value; }
+            internal get { return _value; }
             set
             {
                 _value = value;
                 MoveThumb();
+                if (VolumeMuteChanged != null)
+                    VolumeMuteChanged(this, null);
             }
         }
 
-        public VolumeBar()
+        internal VolumeBar()
         {
             InitializeComponent();
+            volEvents = new VolEventsHandler(this);
+        }
+
+        internal void ChangeMute()
+        {
+            Mute = !Mute;
+            Device.AudioEndpointVolume.Mute = Mute;
+        }
+
+        private void ChangeVolume(float value)
+        {
+            _value = value;
+            Device.AudioEndpointVolume.MasterVolumeLevelScalar = value;
+            if (VolumeMuteChanged != null)
+                VolumeMuteChanged(this, null);
         }
 
         private void MoveThumb()
@@ -56,9 +82,7 @@ namespace AudioSwitch
             }
             else
             {
-                Mute = !Mute;
-                if (MuteChanged != null)
-                    MuteChanged(this, null);
+                ChangeMute();
             }
         }
 
@@ -84,10 +108,7 @@ namespace AudioSwitch
                 Thumb.Refresh();
 
                 var trackStep = (float)(ClientSize.Width - Thumb.Width);
-                _value = Thumb.Left / trackStep;
-
-                if (TrackBarValueChanged != null)
-                    TrackBarValueChanged(this, null);
+                ChangeVolume(Thumb.Left / trackStep);
             }
         }
         
@@ -95,6 +116,7 @@ namespace AudioSwitch
         {
             if (e.Button == MouseButtons.Left)
             {
+                Moving = true;
                 var theFormPosition = PointToClient(MousePosition);
                 theFormPosition.X -= Thumb.Width / 2;
 
@@ -105,14 +127,10 @@ namespace AudioSwitch
                     theFormPosition.X = 0;
 
                 Thumb.Left = theFormPosition.X;
-
-                Moving = true;
             }
             else
             {
-                Mute = !Mute;
-                if (MuteChanged != null)
-                    MuteChanged(this, null);
+                ChangeMute();
             }
         }
 
@@ -132,10 +150,7 @@ namespace AudioSwitch
                 Thumb.Left = theFormPosition.X;
 
                 var trackStep = (float)(ClientSize.Width - Thumb.Width);
-                _value = Thumb.Left / trackStep;
-
-                if (TrackBarValueChanged != null)
-                    TrackBarValueChanged(this, null);
+                ChangeVolume(Thumb.Left / trackStep);
             }
         }
 
@@ -162,6 +177,62 @@ namespace AudioSwitch
             if (_mute) return;
             Thumb.Image.Dispose();
             Thumb.Image = Resources.ThumbNormal;
+        }
+
+        internal void DoScroll(object sender, ScrollEventArgs e)
+        {
+            var amount = DateTime.Now - LastScroll <= ShortInterval ? 0.1f : 0.05f;
+            LastScroll = DateTime.Now;
+            var step = (float)Math.Abs(e.NewValue) / WHEEL_DELTA * amount;
+
+            if (e.NewValue > 0)
+                if (Value <= 1 - step)
+                    ChangeVolume(Value + step);
+                else
+                    ChangeVolume(1);
+
+            else if (e.NewValue < 0)
+                if (Value >= step)
+                    ChangeVolume(Value - step);
+                else
+                    ChangeVolume(0);
+        }
+
+        private void VolNotify(AudioVolumeNotificationData data)
+        {
+            if (InvokeRequired)
+                Invoke(new AudioEndpointVolumeNotificationDelegate(VolNotify),
+                       new object[] { data });
+            else
+            {
+                if (!Moving)
+                    Value = data.MasterVolume;
+                Mute = data.Muted;
+            }
+        }
+
+        internal void UnregisterDevice()
+        {
+            if (EndPoints.DeviceNames.Count == 0) return;
+
+            try
+            {
+                Device.AudioEndpointVolume.OnVolumeNotification -= VolNotify;
+                Device.AudioSessionManager.Sessions[0].UnregisterAudioSessionNotification(volEvents);
+            }
+            catch { }
+        }
+
+        internal void RegisterDevice(EDataFlow RenderType)
+        {
+            if (EndPoints.DeviceNames.Count == 0) return;
+
+            Device = EndPoints.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
+            Value = Device.AudioEndpointVolume.MasterVolumeLevelScalar;
+            Mute = Device.AudioEndpointVolume.Mute;
+            Stereo = Device.AudioMeterInformation.PeakValues.GetCount() > 1;
+            Device.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
+            Device.AudioEndpointVolume.OnVolumeNotification += VolNotify;
         }
     }
 }
