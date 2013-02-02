@@ -11,9 +11,13 @@ namespace AudioSwitch
         {
             if (m.Msg == 0x020A)
             {
-                var bytes = BitConverter.GetBytes((int)m.WParam);
-                var y = BitConverter.ToInt16(bytes, 2);
-                Scroll(this, new ScrollEventArgs((ScrollEventType) (m.WParam.ToInt32() & 0xffff), y));
+                try
+                {
+                    var bytes = BitConverter.GetBytes((int)m.WParam);
+                    var y = BitConverter.ToInt16(bytes, 2);
+                    Scroll(this, new ScrollEventArgs((ScrollEventType)(m.WParam.ToInt32() & 0xffff), y));
+                }
+                catch {}
             }
             else
                 base.WndProc(ref m);

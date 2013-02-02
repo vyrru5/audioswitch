@@ -112,7 +112,7 @@ namespace AudioSwitch
             var appbardata = new APPBARDATA {hWnd = IntPtr.Zero};
             appbardata.cbSize = (uint)Marshal.SizeOf(appbardata);
             if (SHAppBarMessage(ABMsg.ABM_GETTASKBARPOS, ref appbardata) == IntPtr.Zero)
-                throw new Exception("Could not retrieve taskbar information.");
+                return new TaskBarInfo { Position = new Rectangle(0, 0, 0, 0), Alignment = TaskBarAlignment.Bottom };
 
             switch (appbardata.uEdge)
             {
@@ -143,6 +143,11 @@ namespace AudioSwitch
             int left;
             int top;
             var tBarInf = GetTaskBarInfo();
+
+            if (tBarInf.Position == new Rectangle(0, 0, 0, 0))
+                return new Point((Screen.PrimaryScreen.WorkingArea.Width + windowwidth)/2,
+                                 (Screen.PrimaryScreen.WorkingArea.Height + windowheight)/2);
+
             var iconRect = GetNotifyIconRectangle(notifyicon);
             var point = new Point(iconRect.Left + iconRect.Width / 2, iconRect.Top + iconRect.Height / 2);
             var flag = iconRect.Left > tBarInf.Position.Right || iconRect.Right < tBarInf.Position.Left || iconRect.Bottom < tBarInf.Position.Top || iconRect.Top > tBarInf.Position.Bottom;

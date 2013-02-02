@@ -27,8 +27,7 @@ namespace AudioSwitch.CoreAudioApi
 {
     public class AudioMeterInformationChannels
     {
-        readonly IAudioMeterInformation _AudioMeterInformation;
-
+        private readonly IAudioMeterInformation _AudioMeterInformation;
         private int _count;
 
         internal int GetCount()
