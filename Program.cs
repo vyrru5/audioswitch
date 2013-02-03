@@ -85,7 +85,8 @@ namespace AudioSwitch
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormSwitcher());
+            var formSwitcher = new FormSwitcher();
+            Application.Run();
         }
     }
 }

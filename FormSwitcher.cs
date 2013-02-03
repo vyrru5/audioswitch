@@ -25,13 +25,6 @@ namespace AudioSwitch
                 base.WndProc(ref m);
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            ShowInTaskbar = false;
-            Hide();
-            base.OnLoad(e);
-        }
-
         public FormSwitcher()
         {
             InitializeComponent();
@@ -42,6 +35,17 @@ namespace AudioSwitch
             TrayIcons.Add(getIcon(Resources._1_33));
             TrayIcons.Add(getIcon(Resources._33_66));
             TrayIcons.Add(getIcon(Resources._66_100));
+
+            RefreshDevices(false);
+            Volume.VolumeMuteChanged += IconChanged;
+            Volume.RegisterDevice(RenderType);
+
+            listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
+            listView1.Scroll += Volume.DoScroll;
+            listView1.LargeImageList = DeviceIcons.ActiveIcons;
+
+            Hotkey.handle = Handle;
+            Hotkey.RegisterHotKey(notifyIcon1);
         }
 
         private static Icon getIcon(Bitmap source)
@@ -52,20 +56,6 @@ namespace AudioSwitch
         ~FormSwitcher()
         {
             Hotkey.UnregisterHotKey();
-        }
-
-        private void FormSwitcher_Load(object sender, EventArgs e)
-        {
-            RefreshDevices(false);
-            Volume.VolumeMuteChanged += IconChanged;
-            Volume.RegisterDevice(RenderType);
-            
-            listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
-            listView1.Scroll += Volume.DoScroll;
-            listView1.LargeImageList = DeviceIcons.ActiveIcons;
-
-            Hotkey.handle = Handle;
-            Hotkey.RegisterHotKey(notifyIcon1);
         }
 
         private void FormSwitcher_Deactivate(object sender, EventArgs e)
@@ -124,6 +114,7 @@ namespace AudioSwitch
             if (ModifierKeys == Keys.Shift)
             {
                 Close();
+                Application.Exit();
                 return;
             }
 
