@@ -1,6 +1,6 @@
 namespace AudioSwitch
 {
-    partial class VolumeBar
+    internal partial class VolumeBar
     {
         /// <summary> 
         /// Required designer variable.
@@ -65,11 +65,11 @@ namespace AudioSwitch
             this.Thumb.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Thumb_MouseUp);
             this.Thumb.Move += new System.EventHandler(this.Thumb_Move);
             // 
-            // ProgressTrackBar
+            // VolumeBar
             // 
             this.Controls.Add(this.Thumb);
             this.Controls.Add(this.lblGraph);
-            this.Name = "ProgressTrackBar";
+            this.Name = "VolumeBar";
             this.Size = new System.Drawing.Size(196, 9);
             ((System.ComponentModel.ISupportInitialize)(this.Thumb)).EndInit();
             this.ResumeLayout(false);
