@@ -74,28 +74,29 @@ namespace AudioSwitch
             // ledRight
             // 
             this.ledRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ledRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ledRight.Location = new System.Drawing.Point(12, 219);
+            this.ledRight.BackColor = System.Drawing.SystemColors.Control;
+            this.ledRight.Location = new System.Drawing.Point(12, 218);
             this.ledRight.Name = "ledRight";
             this.ledRight.Size = new System.Drawing.Size(196, 6);
             this.ledRight.TabIndex = 9;
             this.ledRight.TabStop = false;
+            this.ledRight.DoubleClick += new System.EventHandler(this.ledBars_DoubleClick);
             // 
             // ledLeft
             // 
             this.ledLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ledLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ledLeft.Location = new System.Drawing.Point(12, 202);
+            this.ledLeft.BackColor = System.Drawing.SystemColors.Control;
+            this.ledLeft.Location = new System.Drawing.Point(12, 201);
             this.ledLeft.Name = "ledLeft";
             this.ledLeft.Size = new System.Drawing.Size(196, 6);
             this.ledLeft.TabIndex = 8;
             this.ledLeft.TabStop = false;
+            this.ledLeft.DoubleClick += new System.EventHandler(this.ledBars_DoubleClick);
             // 
             // Volume
             // 
             this.Volume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Volume.Location = new System.Drawing.Point(12, 209);
-            this.Volume.Mute = false;
+            this.Volume.Location = new System.Drawing.Point(12, 208);
             this.Volume.Name = "Volume";
             this.Volume.Size = new System.Drawing.Size(196, 10);
             this.Volume.TabIndex = 7;

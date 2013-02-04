@@ -6,7 +6,7 @@ using AudioSwitch.Properties;
 
 namespace AudioSwitch
 {
-    public partial class VolumeBar : UserControl
+    internal partial class VolumeBar : UserControl
     {
         internal EventHandler VolumeMuteChanged;
         internal MMDevice Device;
@@ -19,9 +19,10 @@ namespace AudioSwitch
         
         private Point pMousePosition = Point.Empty;
         private bool Moving;
+        private readonly ToolTip handleTip = new ToolTip();
 
         private bool _mute;
-        public bool Mute
+        internal bool Mute
         {
             get { return _mute; }
             set
@@ -35,9 +36,9 @@ namespace AudioSwitch
         }
 
         private float _value;
-        public float Value
+        internal float Value
         {
-            internal get { return _value; }
+            get { return _value; }
             set
             {
                 _value = value;
@@ -51,6 +52,7 @@ namespace AudioSwitch
         {
             InitializeComponent();
             volEvents = new VolEventsHandler(this);
+            handleTip.SetToolTip(Thumb, "Master Volume");
         }
 
         internal void ChangeMute()

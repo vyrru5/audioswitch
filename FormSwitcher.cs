@@ -36,6 +36,9 @@ namespace AudioSwitch
             TrayIcons.Add(getIcon(Resources._33_66));
             TrayIcons.Add(getIcon(Resources._66_100));
 
+            ledLeft.SetColors(Settings.Default.NewLEDs);
+            ledRight.SetColors(Settings.Default.NewLEDs);
+
             RefreshDevices(false);
             Volume.VolumeMuteChanged += IconChanged;
             Volume.RegisterDevice(RenderType);
@@ -244,6 +247,15 @@ namespace AudioSwitch
             listView1.LargeImageList.Images[CurrentDevice].Dispose();
             listView1.LargeImageList.Images[CurrentDevice] = DeviceIcons.DefaultIcons.Images[CurrentDevice];
             listView1.EndUpdate();
+        }
+
+        private void ledBars_DoubleClick(object sender, EventArgs e)
+        {
+            var newVal = !Settings.Default.NewLEDs;
+            ledLeft.SetColors(newVal);
+            ledRight.SetColors(newVal);
+            Settings.Default.NewLEDs = newVal;
+            Settings.Default.Save();
         }
     }
 }
