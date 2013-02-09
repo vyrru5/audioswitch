@@ -59,33 +59,29 @@ namespace AudioSwitch.CoreAudioApi
             return Result;
         }
 
-        public object Value
+        public object GetValue()
         {
-            get
+            var ve = (VarEnum)vt;
+            switch (ve)
             {
-                var ve = (VarEnum)vt;
-                switch (ve)
-                {
-                    case VarEnum.VT_I1:
-                        return bVal;
-                    case VarEnum.VT_I2:
-                        return iVal;
-                    case VarEnum.VT_I4:
-                        return lVal;
-                    case VarEnum.VT_I8:
-                        return hVal;
-                    case VarEnum.VT_INT:
-                        return iVal;
-                    case VarEnum.VT_UI4:
-                        return ulVal;
-                    case VarEnum.VT_LPWSTR:
-                        return Marshal.PtrToStringUni(everything_else);
-                    case VarEnum.VT_BLOB:
-                        return GetBlob();
-                }
-                return "FIXME Type = " + ve.ToString();
+                case VarEnum.VT_I1:
+                    return bVal;
+                case VarEnum.VT_I2:
+                    return iVal;
+                case VarEnum.VT_I4:
+                    return lVal;
+                case VarEnum.VT_I8:
+                    return hVal;
+                case VarEnum.VT_INT:
+                    return iVal;
+                case VarEnum.VT_UI4:
+                    return ulVal;
+                case VarEnum.VT_LPWSTR:
+                    return Marshal.PtrToStringUni(everything_else);
+                case VarEnum.VT_BLOB:
+                    return GetBlob();
             }
+            return "FIXME Type = " + ve.ToString();
         }
-        
     } 
 }

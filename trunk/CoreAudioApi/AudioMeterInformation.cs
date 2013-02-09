@@ -20,7 +20,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-using System.Runtime.InteropServices;
 using AudioSwitch.CoreAudioApi.Interfaces;
 
 namespace AudioSwitch.CoreAudioApi
@@ -28,24 +27,12 @@ namespace AudioSwitch.CoreAudioApi
     public class AudioMeterInformation
     {
         private readonly IAudioMeterInformation _AudioMeterInformation;
-        private readonly AudioMeterInformationChannels _Channels;
+        internal readonly AudioMeterInformationChannels Channels;
 
         internal AudioMeterInformation(IAudioMeterInformation realInterface)
         {
-            int HardwareSupp;
-
             _AudioMeterInformation = realInterface;
-            Marshal.ThrowExceptionForHR(_AudioMeterInformation.QueryHardwareSupport(out HardwareSupp));
-            _Channels = new AudioMeterInformationChannels(_AudioMeterInformation);
-
-        }
-
-        public AudioMeterInformationChannels PeakValues
-        {
-            get
-            {
-                return _Channels;
-            }
+            Channels = new AudioMeterInformationChannels(_AudioMeterInformation);
         }
     }
 }

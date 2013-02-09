@@ -39,7 +39,8 @@ namespace AudioSwitch.CoreAudioApi
             _Parent = parent;
         }
         
-        [PreserveSig] public int OnNotify(IntPtr NotifyData)
+        [PreserveSig] 
+        public int OnNotify(IntPtr NotifyData)
         {
             //Since AUDIO_VOLUME_NOTIFICATION_DATA is dynamic in length based on the
             //number of audio channels available we cannot just call PtrToStructure 
@@ -50,17 +51,15 @@ namespace AudioSwitch.CoreAudioApi
             var data = (AUDIO_VOLUME_NOTIFICATION_DATA) Marshal.PtrToStructure(NotifyData, typeof(AUDIO_VOLUME_NOTIFICATION_DATA));
             
             //Determine offset in structure of the first float
-            var Offset = Marshal.OffsetOf(typeof(AUDIO_VOLUME_NOTIFICATION_DATA),"ChannelVolume");
+            var Offset = Marshal.OffsetOf(typeof (AUDIO_VOLUME_NOTIFICATION_DATA), "ChannelVolume");
             //Determine offset in memory of the first float
-            var FirstFloatPtr = (IntPtr)((long)NotifyData + (long)Offset);
+            var FirstFloatPtr = (IntPtr) ((long) NotifyData + (long) Offset);
 
             var voldata = new float[data.nChannels];
             
             //Read all floats from memory.
-            for (int i = 0; i < data.nChannels; i++)
-            {
-                voldata[i] = (float)Marshal.PtrToStructure(FirstFloatPtr, typeof(float));
-            }
+            for (var i = 0; i < data.nChannels; i++)
+                voldata[i] = (float) Marshal.PtrToStructure(FirstFloatPtr, typeof (float));
 
             //Create combined structure and Fire Event in parent class.
             var NotificationData = new AudioVolumeNotificationData(data.bMuted, data.fMasterVolume);

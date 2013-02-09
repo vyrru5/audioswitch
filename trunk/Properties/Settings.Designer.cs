@@ -46,17 +46,5 @@ namespace AudioSwitch.Properties {
                 this["Key"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool NewLEDs {
-            get {
-                return ((bool)(this["NewLEDs"]));
-            }
-            set {
-                this["NewLEDs"] = value;
-            }
-        }
     }
 }

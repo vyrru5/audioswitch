@@ -8,8 +8,8 @@ namespace AudioSwitch
 {
     partial class FormSwitcher
     {
-        private CustomListView listView1;
-        private NotifyIcon notifyIcon1;
+        private CustomListView listDevices;
+        private NotifyIcon notifyIcon;
 
         /// <summary>
         /// Required designer variable.
@@ -38,33 +38,33 @@ namespace AudioSwitch
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.pictureItemsBack = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.ledRight = new AudioSwitch.LedBar();
             this.ledLeft = new AudioSwitch.LedBar();
-            this.Volume = new AudioSwitch.VolumeBar();
-            this.listView1 = new AudioSwitch.CustomListView();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.VolBar = new AudioSwitch.VolumeBar();
+            this.listDevices = new AudioSwitch.CustomListView();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureItemsBack)).BeginInit();
             this.SuspendLayout();
             // 
-            // notifyIcon1
+            // notifyIcon
             // 
-            this.notifyIcon1.Text = "AudioSwitch";
-            this.notifyIcon1.Visible = true;
-            this.notifyIcon1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDown);
-            this.notifyIcon1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseMove);
-            this.notifyIcon1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseUp);
+            this.notifyIcon.Text = "AudioSwitch";
+            this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDown += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDown);
+            this.notifyIcon.MouseMove += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseMove);
+            this.notifyIcon.MouseUp += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseUp);
             // 
-            // pictureBox1
+            // pictureItemsBack
             // 
-            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 191);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(223, 44);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
+            this.pictureItemsBack.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.pictureItemsBack.Location = new System.Drawing.Point(0, 191);
+            this.pictureItemsBack.Name = "pictureItemsBack";
+            this.pictureItemsBack.Size = new System.Drawing.Size(223, 44);
+            this.pictureItemsBack.TabIndex = 2;
+            this.pictureItemsBack.TabStop = false;
+            this.pictureItemsBack.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             // 
             // timer1
             // 
@@ -75,49 +75,46 @@ namespace AudioSwitch
             // 
             this.ledRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ledRight.BackColor = System.Drawing.SystemColors.Control;
-            this.ledRight.Location = new System.Drawing.Point(12, 218);
+            this.ledRight.Location = new System.Drawing.Point(13, 219);
             this.ledRight.Name = "ledRight";
-            this.ledRight.Size = new System.Drawing.Size(196, 6);
+            this.ledRight.Size = new System.Drawing.Size(194, 4);
             this.ledRight.TabIndex = 9;
             this.ledRight.TabStop = false;
-            this.ledRight.DoubleClick += new System.EventHandler(this.ledBars_DoubleClick);
             // 
             // ledLeft
             // 
             this.ledLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ledLeft.BackColor = System.Drawing.SystemColors.Control;
-            this.ledLeft.Location = new System.Drawing.Point(12, 201);
+            this.ledLeft.Location = new System.Drawing.Point(13, 202);
             this.ledLeft.Name = "ledLeft";
-            this.ledLeft.Size = new System.Drawing.Size(196, 6);
+            this.ledLeft.Size = new System.Drawing.Size(194, 4);
             this.ledLeft.TabIndex = 8;
             this.ledLeft.TabStop = false;
-            this.ledLeft.DoubleClick += new System.EventHandler(this.ledBars_DoubleClick);
             // 
-            // Volume
+            // VolBar
             // 
-            this.Volume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Volume.Location = new System.Drawing.Point(12, 208);
-            this.Volume.Name = "Volume";
-            this.Volume.Size = new System.Drawing.Size(196, 10);
-            this.Volume.TabIndex = 7;
-            this.Volume.TabStop = false;
+            this.VolBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.VolBar.Location = new System.Drawing.Point(13, 208);
+            this.VolBar.Name = "VolBar";
+            this.VolBar.Size = new System.Drawing.Size(194, 9);
+            this.VolBar.TabIndex = 7;
+            this.VolBar.TabStop = false;
             // 
-            // listView1
+            // listDevices
             // 
-            this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listView1.FullRowSelect = true;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(1, -1);
-            this.listView1.MultiSelect = false;
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(222, 437);
-            this.listView1.TabIndex = 0;
-            this.listView1.TileSize = new System.Drawing.Size(222, 40);
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Tile;
-            this.listView1.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listView1_ItemSelectionChanged);
-            this.listView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listView1_KeyDown);
-            this.listView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listView1_KeyUp);
+            this.listDevices.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listDevices.FullRowSelect = true;
+            this.listDevices.HideSelection = false;
+            this.listDevices.Location = new System.Drawing.Point(1, -1);
+            this.listDevices.MultiSelect = false;
+            this.listDevices.Name = "listDevices";
+            this.listDevices.Size = new System.Drawing.Size(220, 437);
+            this.listDevices.TabIndex = 0;
+            this.listDevices.TileSize = new System.Drawing.Size(222, 40);
+            this.listDevices.UseCompatibleStateImageBehavior = false;
+            this.listDevices.View = System.Windows.Forms.View.Tile;
+            this.listDevices.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listDevices_KeyDown);
+            this.listDevices.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listDevices_KeyUp);
             // 
             // FormSwitcher
             // 
@@ -125,9 +122,9 @@ namespace AudioSwitch
             this.ControlBox = false;
             this.Controls.Add(this.ledRight);
             this.Controls.Add(this.ledLeft);
-            this.Controls.Add(this.Volume);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.VolBar);
+            this.Controls.Add(this.pictureItemsBack);
+            this.Controls.Add(this.listDevices);
             this.DoubleBuffered = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -137,16 +134,16 @@ namespace AudioSwitch
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.TopMost = true;
             this.Deactivate += new System.EventHandler(this.FormSwitcher_Deactivate);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureItemsBack)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private PictureBox pictureBox1;
+        private PictureBox pictureItemsBack;
         private Timer timer1;
-        private VolumeBar Volume;
+        private VolumeBar VolBar;
         private LedBar ledLeft;
         private LedBar ledRight;
     }

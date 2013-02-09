@@ -14,8 +14,7 @@ namespace AudioSwitch
 
         private readonly VolEventsHandler volEvents;
         private static DateTime LastScroll = DateTime.Now;
-        private static readonly TimeSpan ShortInterval = new TimeSpan(0, 0, 0, 0, 70);
-        private const int WHEEL_DELTA = 120;
+        private static readonly TimeSpan ShortInterval = new TimeSpan(0, 0, 0, 0, 80);
         
         private Point pMousePosition = Point.Empty;
         private bool Moving;
@@ -183,19 +182,18 @@ namespace AudioSwitch
 
         internal void DoScroll(object sender, ScrollEventArgs e)
         {
-            var amount = DateTime.Now - LastScroll <= ShortInterval ? 0.1f : 0.05f;
+            var amount = DateTime.Now - LastScroll <= ShortInterval ? 0.04f : 0.02f;
             LastScroll = DateTime.Now;
-            var step = (float)Math.Abs(e.NewValue) / WHEEL_DELTA * amount;
 
             if (e.NewValue > 0)
-                if (Value <= 1 - step)
-                    ChangeVolume(Value + step);
+                if (Value <= 1 - amount)
+                    ChangeVolume(Value + amount);
                 else
                     ChangeVolume(1);
 
             else if (e.NewValue < 0)
-                if (Value >= step)
-                    ChangeVolume(Value - step);
+                if (Value >= amount)
+                    ChangeVolume(Value - amount);
                 else
                     ChangeVolume(0);
         }
@@ -204,7 +202,7 @@ namespace AudioSwitch
         {
             if (InvokeRequired)
                 Invoke(new AudioEndpointVolumeNotificationDelegate(VolNotify),
-                       new object[] { data });
+                       new object[] {data});
             else
             {
                 if (!Moving)
@@ -232,7 +230,7 @@ namespace AudioSwitch
             Device = EndPoints.pEnum.GetDefaultAudioEndpoint(RenderType, ERole.eMultimedia);
             Value = Device.AudioEndpointVolume.MasterVolumeLevelScalar;
             Mute = Device.AudioEndpointVolume.Mute;
-            Stereo = Device.AudioMeterInformation.PeakValues.GetCount() > 1;
+            Stereo = Device.AudioMeterInformation.Channels.GetCount() > 1;
             Device.AudioSessionManager.Sessions[0].RegisterAudioSessionNotification(volEvents);
             Device.AudioEndpointVolume.OnVolumeNotification += VolNotify;
         }

@@ -38,11 +38,11 @@ namespace AudioSwitch.CoreAudioApi
         private static Guid IID_IAudioEndpointVolume = typeof(IAudioEndpointVolume).GUID;  
         private static Guid IID_IAudioSessionManager = typeof(IAudioSessionManager2).GUID;
 
-        private void GetPropertyInformation()
+        private PropertyStore GetPropertyInformation()
         {
             IPropertyStore propstore;
             Marshal.ThrowExceptionForHR(_RealDevice.OpenPropertyStore(EStgmAccess.STGM_READ, out propstore));
-            _PropertyStore = new PropertyStore(propstore);
+            return new PropertyStore(propstore);
         }
 
         private void GetAudioSessionManager()
@@ -104,9 +104,9 @@ namespace AudioSwitch.CoreAudioApi
             get
             {
                 if (_PropertyStore == null)
-                    GetPropertyInformation();
+                    _PropertyStore = GetPropertyInformation();
                 if (_PropertyStore.Contains(PKEY.PKEY_DeviceInterface_FriendlyName))
-                    return (string) _PropertyStore[PKEY.PKEY_DeviceInterface_FriendlyName].Value;
+                    return (string) _PropertyStore[PKEY.PKEY_DeviceInterface_FriendlyName].PropVariant.GetValue();
                 return "Unknown";
             }
         }
@@ -116,9 +116,9 @@ namespace AudioSwitch.CoreAudioApi
             get
             {
                 if (_PropertyStore == null)
-                    GetPropertyInformation();
+                    _PropertyStore = GetPropertyInformation();
                 if (_PropertyStore.Contains(PKEY.PKEY_DeviceClass_IconPath))
-                    return (string) _PropertyStore[PKEY.PKEY_DeviceClass_IconPath].Value;
+                    return (string) _PropertyStore[PKEY.PKEY_DeviceClass_IconPath].PropVariant.GetValue();
                 return "Unknown";
             }
         }

@@ -41,10 +41,7 @@ namespace AudioSwitch.CoreAudioApi
                 Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMasterVolumeLevelScalar(out result));
                 return result;
             }
-            set
-            {
-                Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty));
-            }
+            set { Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty)); }
         }
         public bool Mute
         {
@@ -54,35 +51,26 @@ namespace AudioSwitch.CoreAudioApi
                 Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMute(out result));
                 return result;
             }
-            set
-            {
-                Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMute(value, Guid.Empty));
-            }
+            set { Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMute(value, Guid.Empty)); }
         }
 
         internal AudioEndpointVolume(IAudioEndpointVolume realEndpointVolume)
         {
-            uint HardwareSupp;
-
             _AudioEndPointVolume = realEndpointVolume;
-            Marshal.ThrowExceptionForHR(_AudioEndPointVolume.QueryHardwareSupport(out HardwareSupp));
             _CallBack = new AudioEndpointVolumeCallback(this);
             Marshal.ThrowExceptionForHR(_AudioEndPointVolume.RegisterControlChangeNotify( _CallBack));
         }
         internal void FireNotification(AudioVolumeNotificationData NotificationData)
         {
-            var del = OnVolumeNotification;
-            if (del != null)
-            {
-                del(NotificationData);
-            }
+            if (OnVolumeNotification != null)
+                OnVolumeNotification(NotificationData);
         }
 
         public void Dispose()
         {
             if (_CallBack != null)
             {
-                Marshal.ThrowExceptionForHR(_AudioEndPointVolume.UnregisterControlChangeNotify( _CallBack ));
+                Marshal.ThrowExceptionForHR(_AudioEndPointVolume.UnregisterControlChangeNotify(_CallBack));
                 _CallBack = null;
             }
         }
