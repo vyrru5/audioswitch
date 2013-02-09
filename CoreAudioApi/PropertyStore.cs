@@ -44,9 +44,9 @@ namespace AudioSwitch.CoreAudioApi
 
         public bool Contains(PropertyKey compareKey)
         {
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                PropertyKey key = Get(i);
+                var key = Get(i);
                 if (key.fmtid == compareKey.fmtid && key.pid == compareKey.pid)
                     return true;
             }

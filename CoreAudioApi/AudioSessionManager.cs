@@ -27,6 +27,7 @@ namespace AudioSwitch.CoreAudioApi
 {
     public class AudioSessionManager
     {
+        public readonly SessionCollection Sessions;
         private readonly IAudioSessionManager2 _AudioSessionManager;
 
         internal AudioSessionManager(IAudioSessionManager2 realAudioSessionManager)
@@ -36,7 +37,5 @@ namespace AudioSwitch.CoreAudioApi
             Marshal.ThrowExceptionForHR(_AudioSessionManager.GetSessionEnumerator(out _SessionEnum));
             Sessions = new SessionCollection(_SessionEnum);
         }
-
-        public readonly SessionCollection Sessions;
     }
 }

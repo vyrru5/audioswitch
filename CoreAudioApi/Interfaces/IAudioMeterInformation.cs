@@ -34,7 +34,7 @@ namespace AudioSwitch.CoreAudioApi.Interfaces
         [PreserveSig]
         int GetMeteringChannelCount(out int pnChannelCount);
         [PreserveSig]
-        int GetChannelsPeakValues( int u32ChannelCount,[In]   IntPtr afPeakValues);
+        int GetChannelsPeakValues(int u32ChannelCount, [In] IntPtr afPeakValues);
         [PreserveSig]
         int QueryHardwareSupport( out int pdwHardwareSupportMask);
     };

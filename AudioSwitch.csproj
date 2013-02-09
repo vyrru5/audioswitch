@@ -42,6 +42,7 @@
   <PropertyGroup>
     <StartupObject>AudioSwitch.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
@@ -109,9 +110,6 @@
     <Compile Include="CoreAudioApi\Interfaces\IAudioMeterInformation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\Interfaces\IAudioPeakMeter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="CoreAudioApi\Interfaces\IAudioSessionControl2.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -133,16 +131,10 @@
     <Compile Include="CoreAudioApi\Interfaces\IMMDeviceEnumerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreAudioApi\Interfaces\IMMEndpoint.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="CoreAudioApi\Interfaces\IPolicyConfig.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CoreAudioApi\Interfaces\IPropertyStore.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CoreAudioApi\Interfaces\ISimpleAudioVolume.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CoreAudioApi\MMDevice.cs">

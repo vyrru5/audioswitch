@@ -50,13 +50,5 @@ namespace AudioSwitch.CoreAudioApi
             Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out _Device));
             return new MMDevice(_Device);
         }
-
-        public MMDeviceEnumerator()
-        {
-            if (Environment.OSVersion.Version.Major < 6)
-            {
-                throw new NotSupportedException("This functionality is only supported on Windows Vista or newer.");
-            }
-        }
     }
 }

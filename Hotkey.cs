@@ -30,7 +30,7 @@ namespace AudioSwitch
 
         private const int HotKeyID = 875682524;
         private static DateTime firstPressed;
-        private static readonly TimeSpan pressDuration = new TimeSpan(0, 0, 0, 2);
+        private static readonly TimeSpan pressDuration = new TimeSpan(0, 0, 0, 4);
 
         static Hotkey()
         {
@@ -45,7 +45,7 @@ namespace AudioSwitch
 
         internal static void RegisterHotKey(NotifyIcon notifyIcon)
         {
-            if (hotModifiers == Keys.Delete || hotKey == Keys.Delete)
+            if (hotModifiers.HasFlag(Keys.Delete) || hotKey.HasFlag(Keys.Delete))
             {
                 hotModifiers = Keys.None;
                 hotKey = Keys.None;
@@ -64,7 +64,7 @@ namespace AudioSwitch
                 modkeys |= HotModifierKeys.Alt;
             if (hotModifiers.HasFlag(Keys.Shift))
                 modkeys |= HotModifierKeys.Shift;
-            if (modkeys == 0) return;
+            if (modkeys == 0 || hotKey == 0) return;
             
             if (RegisterHotKey(handle, HotKeyID, (uint)modkeys, (uint)hotKey))
             {

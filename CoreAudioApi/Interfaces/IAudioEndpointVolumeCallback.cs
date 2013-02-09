@@ -29,7 +29,8 @@ namespace AudioSwitch.CoreAudioApi.Interfaces
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IAudioEndpointVolumeCallback 
     {
-        [PreserveSig] int OnNotify(IntPtr pNotifyData);
+        [PreserveSig] 
+        int OnNotify(IntPtr pNotifyData);
     };
 
 }

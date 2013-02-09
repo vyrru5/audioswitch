@@ -28,7 +28,7 @@ namespace AudioSwitch
         public FormSwitcher()
         {
             InitializeComponent();
-            SetWindowTheme(listView1.Handle, "explorer", null);
+            SetWindowTheme(listDevices.Handle, "explorer", null);
 
             TrayIcons.Add(getIcon(Resources.mute));
             TrayIcons.Add(getIcon(Resources.zero));
@@ -36,19 +36,15 @@ namespace AudioSwitch
             TrayIcons.Add(getIcon(Resources._33_66));
             TrayIcons.Add(getIcon(Resources._66_100));
 
-            ledLeft.SetColors(Settings.Default.NewLEDs);
-            ledRight.SetColors(Settings.Default.NewLEDs);
-
             RefreshDevices(false);
-            Volume.VolumeMuteChanged += IconChanged;
-            Volume.RegisterDevice(RenderType);
+            VolBar.VolumeMuteChanged += IconChanged;
+            VolBar.RegisterDevice(RenderType);
 
-            listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
-            listView1.Scroll += Volume.DoScroll;
-            listView1.LargeImageList = DeviceIcons.ActiveIcons;
+            listDevices.Scroll += VolBar.DoScroll;
+            listDevices.LargeImageList = DeviceIcons.ActiveIcons;
 
             Hotkey.handle = Handle;
-            Hotkey.RegisterHotKey(notifyIcon1);
+            Hotkey.RegisterHotKey(notifyIcon);
         }
 
         private static Icon getIcon(Bitmap source)
@@ -64,38 +60,39 @@ namespace AudioSwitch
         private void FormSwitcher_Deactivate(object sender, EventArgs e)
         {
             Hide();
+            listDevices.ItemSelectionChanged -= listDevices_ItemSelectionChanged;
             timer1.Enabled = false;
-            Volume.UnregisterDevice();
+            VolBar.UnregisterDevice();
             RenderType = EDataFlow.eRender;
             RefreshDevices(false);
-            Volume.RegisterDevice(RenderType);
+            VolBar.RegisterDevice(RenderType);
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             using (var pen = new Pen(SystemColors.ScrollBar))
-                e.Graphics.DrawLine(pen, 0, 0, pictureBox1.Width, 0);
+                e.Graphics.DrawLine(pen, 0, 0, pictureItemsBack.Width, 0);
         }
 
         private void IconChanged(object sender, EventArgs eventArgs)
         {
-            if (Volume.Mute)
-                notifyIcon1.Icon = TrayIcons[0];
-            else if (Volume.Value == 0)
-                notifyIcon1.Icon = TrayIcons[1];
-            else if (Volume.Value > 0 && Volume.Value < 0.33)
-                notifyIcon1.Icon = TrayIcons[2];
-            else if (Volume.Value > 0.33 && Volume.Value < 0.66)
-                notifyIcon1.Icon = TrayIcons[3];
-            else if (Volume.Value > 0.66 && Volume.Value <= 1)
-                notifyIcon1.Icon = TrayIcons[4];
+            if (VolBar.Mute)
+                notifyIcon.Icon = TrayIcons[0];
+            else if (VolBar.Value == 0)
+                notifyIcon.Icon = TrayIcons[1];
+            else if (VolBar.Value > 0 && VolBar.Value < 0.33)
+                notifyIcon.Icon = TrayIcons[2];
+            else if (VolBar.Value > 0.33 && VolBar.Value < 0.66)
+                notifyIcon.Icon = TrayIcons[3];
+            else if (VolBar.Value > 0.66 && VolBar.Value <= 1)
+                notifyIcon.Icon = TrayIcons[4];
         }
 
         private void HotKeyPressed()
         {
             if (Visible) return; // Let's not make it complicated here...
 
-            Volume.UnregisterDevice();
+            VolBar.UnregisterDevice();
             RenderType = EDataFlow.eRender;
             RefreshDevices(false);
             if (EndPoints.DeviceNames.Count == 0) return;
@@ -103,13 +100,13 @@ namespace AudioSwitch
             CurrentDevice = CurrentDevice == EndPoints.DeviceNames.Count - 1 ? 0 : CurrentDevice + 1;
             EndPoints.SetDefaultDevice(CurrentDevice);
             if (!Program.stfu)
-                notifyIcon1.ShowBalloonTip(0, "Audio device changed", EndPoints.DeviceNames[CurrentDevice], ToolTipIcon.Info);
+                notifyIcon.ShowBalloonTip(0, "Audio device changed", EndPoints.DeviceNames[CurrentDevice], ToolTipIcon.Info);
         }
 
         private void notifyIcon1_MouseMove(object sender, MouseEventArgs e)
         {
             var text = EndPoints.DeviceNames[CurrentDevice];
-            notifyIcon1.Text = text.Length > 63 ? text.Substring(0, 63) : text;
+            notifyIcon.Text = text.Length > 63 ? text.Substring(0, 63) : text;
         }
 
         private void notifyIcon1_MouseDown(object sender, MouseEventArgs e)
@@ -121,25 +118,25 @@ namespace AudioSwitch
                 return;
             }
 
-            Volume.UnregisterDevice();
+            VolBar.UnregisterDevice();
             RenderType = ModifierKeys.HasFlag(Keys.Control) ? EDataFlow.eCapture : EDataFlow.eRender;
 
             if (ModifierKeys.HasFlag(Keys.Alt))
             {
                 RefreshDevices(false);
-                Volume.RegisterDevice(RenderType);
-                Volume.ChangeMute();
-                Volume.UnregisterDevice();
+                VolBar.RegisterDevice(RenderType);
+                VolBar.ChangeMute();
+                VolBar.UnregisterDevice();
 
                 if (RenderType == EDataFlow.eCapture && !Program.stfu)
                 {
-                    var mutetxt = String.Format("Device {0}muted", Volume.Mute ? "" : "un");
-                    notifyIcon1.ShowBalloonTip(0, mutetxt, EndPoints.DeviceNames[CurrentDevice], ToolTipIcon.Info);
+                    var mutetxt = String.Format("Device {0}muted", VolBar.Mute ? "" : "un");
+                    notifyIcon.ShowBalloonTip(0, mutetxt, EndPoints.DeviceNames[CurrentDevice], ToolTipIcon.Info);
                 }
                 
                 RenderType = EDataFlow.eRender;
                 RefreshDevices(false);
-                Volume.RegisterDevice(RenderType);
+                VolBar.RegisterDevice(RenderType);
                 return;
             }
             
@@ -155,14 +152,15 @@ namespace AudioSwitch
                 case MouseButtons.Left:
                     if (!Program.stfu)
                     {
-                        Height = listView1.Items.Count * listView1.TileSize.Height + pictureBox1.Height + 15;
-                        var point = WindowPosition.GetWindowPosition(notifyIcon1, Width, Height);
+                        Height = listDevices.Items.Count * listDevices.TileSize.Height + pictureItemsBack.Height + 15;
+                        var point = WindowPosition.GetWindowPosition(notifyIcon, Width, Height);
                         Left = point.X;
                         Top = point.Y;
 
                         timer1.Enabled = true;
                         Show();
                         Activate();
+                        listDevices.ItemSelectionChanged += listDevices_ItemSelectionChanged;
                     }
                     break;
 
@@ -172,56 +170,56 @@ namespace AudioSwitch
                         CurrentDevice = CurrentDevice == EndPoints.DeviceNames.Count - 1 ? 0 : CurrentDevice + 1;
                         EndPoints.SetDefaultDevice(CurrentDevice);
                         if (!Program.stfu)
-                            notifyIcon1.ShowBalloonTip(0, "Audio device changed", EndPoints.DeviceNames[CurrentDevice], ToolTipIcon.Info);
+                            notifyIcon.ShowBalloonTip(0, "Audio device changed", EndPoints.DeviceNames[CurrentDevice], ToolTipIcon.Info);
                     }
                     break;
             }
-            Volume.RegisterDevice(RenderType);
+            VolBar.RegisterDevice(RenderType);
         }
 
-        private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private void listDevices_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            listView1.BeginUpdate();
+            listDevices.BeginUpdate();
 
             if (!e.IsSelected)
             {
-                listView1.LargeImageList.Images[CurrentDevice].Dispose();
-                listView1.LargeImageList.Images[CurrentDevice] = DeviceIcons.NormalIcons.Images[CurrentDevice];
+                listDevices.LargeImageList.Images[CurrentDevice].Dispose();
+                listDevices.LargeImageList.Images[CurrentDevice] = DeviceIcons.NormalIcons.Images[CurrentDevice];
             }
-            if (e.IsSelected && CurrentDevice != e.ItemIndex)
+            else if (CurrentDevice != e.ItemIndex)
             {
                 CurrentDevice = e.ItemIndex;
                 EndPoints.SetDefaultDevice(CurrentDevice);
-                Volume.UnregisterDevice();
-                Volume.RegisterDevice(RenderType);
+                VolBar.UnregisterDevice();
+                VolBar.RegisterDevice(RenderType);
 
-                listView1.LargeImageList.Images[CurrentDevice].Dispose();
-                listView1.LargeImageList.Images[CurrentDevice] = DeviceIcons.DefaultIcons.Images[CurrentDevice];
+                listDevices.LargeImageList.Images[CurrentDevice].Dispose();
+                listDevices.LargeImageList.Images[CurrentDevice] = DeviceIcons.DefaultIcons.Images[CurrentDevice];
             }
 
-            listView1.EndUpdate();
+            listDevices.EndUpdate();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            var peaks = Volume.Device.AudioMeterInformation.PeakValues.GetPeaks();
+            var peaks = VolBar.Device.AudioMeterInformation.Channels.GetPeaks();
             ledLeft.SetValue(peaks[0]);
-            ledRight.SetValue(peaks[Volume.Stereo ? 1 : 0]);
+            ledRight.SetValue(peaks[VolBar.Stereo ? 1 : 0]);
 
-            if (!listView1.Focused)
-                listView1.Focus();
+            if (!listDevices.Focused)
+                listDevices.Focus();
 
-            Hotkey.PollNewHotkey(notifyIcon1);
+            Hotkey.PollNewHotkey(notifyIcon);
         }
 
-        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        private void listDevices_KeyDown(object sender, KeyEventArgs e)
         {
             Hotkey.isDown = true;
             Hotkey.hotModifiers = e.Modifiers;
             Hotkey.hotKey = e.KeyCode;
         }
 
-        private void listView1_KeyUp(object sender, KeyEventArgs e)
+        private void listDevices_KeyUp(object sender, KeyEventArgs e)
         {
             Hotkey.isDown = false;
             Hotkey.isRegd = false;
@@ -235,27 +233,18 @@ namespace AudioSwitch
             CurrentDevice = EndPoints.GetDefaultDevice(RenderType);
             if (!UpdateListView) return;
 
-            listView1.BeginUpdate();
-            listView1.Clear();
+            listDevices.BeginUpdate();
+            listDevices.Clear();
             
             for (var i = 0; i < EndPoints.DeviceNames.Count; i++)
             {
                 var item = new ListViewItem { ImageIndex = i, Text = EndPoints.DeviceNames[i], Selected = i == CurrentDevice };
-                listView1.Items.Add(item);
+                listDevices.Items.Add(item);
             }
             
-            listView1.LargeImageList.Images[CurrentDevice].Dispose();
-            listView1.LargeImageList.Images[CurrentDevice] = DeviceIcons.DefaultIcons.Images[CurrentDevice];
-            listView1.EndUpdate();
-        }
-
-        private void ledBars_DoubleClick(object sender, EventArgs e)
-        {
-            var newVal = !Settings.Default.NewLEDs;
-            ledLeft.SetColors(newVal);
-            ledRight.SetColors(newVal);
-            Settings.Default.NewLEDs = newVal;
-            Settings.Default.Save();
+            listDevices.LargeImageList.Images[CurrentDevice].Dispose();
+            listDevices.LargeImageList.Images[CurrentDevice] = DeviceIcons.DefaultIcons.Images[CurrentDevice];
+            listDevices.EndUpdate();
         }
     }
 }

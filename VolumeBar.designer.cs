@@ -28,6 +28,7 @@ namespace AudioSwitch
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VolumeBar));
             this.lblGraph = new System.Windows.Forms.Label();
             this.Thumb = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.Thumb)).BeginInit();
@@ -37,14 +38,13 @@ namespace AudioSwitch
             // 
             this.lblGraph.Font = new System.Drawing.Font("Microsoft Sans Serif", 3.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(186)));
             this.lblGraph.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblGraph.Location = new System.Drawing.Point(0, 1);
+            this.lblGraph.Location = new System.Drawing.Point(-1, 1);
             this.lblGraph.Margin = new System.Windows.Forms.Padding(0);
             this.lblGraph.Name = "lblGraph";
-            this.lblGraph.Size = new System.Drawing.Size(196, 9);
+            this.lblGraph.Size = new System.Drawing.Size(196, 7);
             this.lblGraph.TabIndex = 11;
-            this.lblGraph.Text = "|       |       |       |       |       |       |       |       |       |       |" +
-    "       |       |       |       |       |       |       |       |       |       |" +
-    "       |       |       |       |";
+            this.lblGraph.Text = resources.GetString("lblGraph.Text");
+            this.lblGraph.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblGraph.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseDown);
             this.lblGraph.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseMove);
             this.lblGraph.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblGraph_MouseUp);
@@ -70,7 +70,7 @@ namespace AudioSwitch
             this.Controls.Add(this.Thumb);
             this.Controls.Add(this.lblGraph);
             this.Name = "VolumeBar";
-            this.Size = new System.Drawing.Size(196, 9);
+            this.Size = new System.Drawing.Size(194, 9);
             ((System.ComponentModel.ISupportInitialize)(this.Thumb)).EndInit();
             this.ResumeLayout(false);
 
