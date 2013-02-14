@@ -8,33 +8,45 @@ namespace AudioSwitch
 {
     internal static class WindowPosition
     {
-        [DllImport("Shell32", SetLastError = true)]
-        private static extern IntPtr SHAppBarMessage(ABMsg dwMessage, ref APPBARDATA pData);
+        [DllImport("shell32.dll", SetLastError = true)]
+        private static extern IntPtr SHAppBarMessage(ABM dwMessage, [In] ref APPBARDATA pData);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("Shell32", SetLastError = true)]
         private static extern int Shell_NotifyIconGetRect(ref NOTIFYICONIDENTIFIER identifier, out RECT iconLocation);
 
-        private enum ABEdge
+        private enum TaskbarPosition
         {
-            ABE_LEFT,
-            ABE_TOP,
-            ABE_RIGHT,
-            ABE_BOTTOM
+            Unknown = -1,
+            Left,
+            Top,
+            Right,
+            Bottom,
         }
 
-        private enum ABMsg
+        private enum ABM : uint
         {
-            ABM_NEW,
-            ABM_REMOVE,
-            ABM_QUERYPOS,
-            ABM_SETPOS,
-            ABM_GETSTATE,
-            ABM_GETTASKBARPOS,
-            ABM_ACTIVATE,
-            ABM_GETAUTOHIDEBAR,
-            ABM_SETAUTOHIDEBAR,
-            ABM_WINDOWPOSCHANGED,
-            ABM_SETSTATE
+            New = 0x00000000,
+            Remove = 0x00000001,
+            QueryPos = 0x00000002,
+            SetPos = 0x00000003,
+            GetState = 0x00000004,
+            GetTaskbarPos = 0x00000005,
+            Activate = 0x00000006,
+            GetAutoHideBar = 0x00000007,
+            SetAutoHideBar = 0x00000008,
+            WindowPosChanged = 0x00000009,
+            SetState = 0x0000000A,
+        }
+
+        private enum ABE : uint
+        {
+            Left = 0,
+            Top = 1,
+            Right = 2,
+            Bottom = 3
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -43,9 +55,9 @@ namespace AudioSwitch
             public uint cbSize;
             public IntPtr hWnd;
             public uint uCallbackMessage;
-            public ABEdge uEdge;
+            public ABE uEdge;
             public RECT rc;
-            public IntPtr lParam;
+            public int lParam;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -64,35 +76,22 @@ namespace AudioSwitch
             public int top;
             public int right;
             public int bottom;
-            public static implicit operator Rectangle(RECT rect)
-            {
-                return rect.right - rect.left >= 0 && rect.bottom - rect.top >= 0
-                           ? new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top)
-                           : new Rectangle(rect.left, rect.top, 0, 0);
-            }
-
-            public static implicit operator RECT(Rectangle rect)
-            {
-                return new RECT { left = rect.Left, top = rect.Top, right = rect.Right, bottom = rect.Bottom };
-            }
         }
 
-        private enum TaskBarAlignment
+        private static TaskbarPosition GetPosition(out Rectangle bounds)
         {
-            Bottom,
-            Top,
-            Left,
-            Right
+            var taskbarHandle = FindWindow("Shell_TrayWnd", null);
+
+            var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA)), hWnd = taskbarHandle };
+            var result = SHAppBarMessage(ABM.GetTaskbarPos, ref data);
+            if (result == IntPtr.Zero)
+                throw new InvalidOperationException();
+
+            bounds = Rectangle.FromLTRB(data.rc.left, data.rc.top, data.rc.right, data.rc.bottom);
+            return (TaskbarPosition)data.uEdge;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct TaskBarInfo
-        {
-            public Rectangle Position;
-            public TaskBarAlignment Alignment;
-        }
-
-        private static Rectangle GetNotifyIconRectangle(IDisposable notifyicon)
+        private static Point GetNotifyIconRectangle(IDisposable notifyicon)
         {
             var field = notifyicon.GetType().GetField("id", BindingFlags.NonPublic | BindingFlags.Instance);
             var num = (int) field.GetValue(notifyicon);
@@ -101,101 +100,56 @@ namespace AudioSwitch
             var notifyiconidentifier2 = new NOTIFYICONIDENTIFIER {hWnd = window.Handle, uID = (uint) num};
             notifyiconidentifier2.cbSize = (uint) Marshal.SizeOf(notifyiconidentifier2);
 
-            RECT iconLocation;
-            Shell_NotifyIconGetRect(ref notifyiconidentifier2, out iconLocation);
-            return iconLocation;
-        }
-
-        private static TaskBarInfo GetTaskBarInfo()
-        {
-            TaskBarAlignment left;
-            var appbardata = new APPBARDATA {hWnd = IntPtr.Zero};
-            appbardata.cbSize = (uint)Marshal.SizeOf(appbardata);
-            if (SHAppBarMessage(ABMsg.ABM_GETTASKBARPOS, ref appbardata) == IntPtr.Zero)
-                return new TaskBarInfo { Position = new Rectangle(0, 0, 0, 0), Alignment = TaskBarAlignment.Bottom };
-
-            switch (appbardata.uEdge)
-            {
-                case ABEdge.ABE_LEFT:
-                    left = TaskBarAlignment.Left;
-                    break;
-
-                case ABEdge.ABE_TOP:
-                    left = TaskBarAlignment.Top;
-                    break;
-
-                case ABEdge.ABE_RIGHT:
-                    left = TaskBarAlignment.Right;
-                    break;
-
-                case ABEdge.ABE_BOTTOM:
-                    left = TaskBarAlignment.Bottom;
-                    break;
-
-                default:
-                    throw new Exception("Couldn't retrieve location of taskbar.");
-            }
-            return new TaskBarInfo { Position = appbardata.rc, Alignment = left };
+            RECT rect;
+            Shell_NotifyIconGetRect(ref notifyiconidentifier2, out rect);
+            return new Point(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2);
         }
 
         public static Point GetWindowPosition(NotifyIcon notifyicon, int windowwidth, int windowheight)
         {
             int left;
             int top;
-            var tBarInf = GetTaskBarInfo();
-
-            if (tBarInf.Position == new Rectangle(0, 0, 0, 0))
+            Rectangle taskbar;
+            var position = GetPosition(out taskbar);
+            
+            if (position == TaskbarPosition.Unknown)
                 return new Point((Screen.PrimaryScreen.WorkingArea.Width + windowwidth)/2,
                                  (Screen.PrimaryScreen.WorkingArea.Height + windowheight)/2);
 
-            var iconRect = GetNotifyIconRectangle(notifyicon);
-            var point = new Point(iconRect.Left + iconRect.Width / 2, iconRect.Top + iconRect.Height / 2);
-            var flag = iconRect.Left > tBarInf.Position.Right || iconRect.Right < tBarInf.Position.Left || iconRect.Bottom < tBarInf.Position.Top || iconRect.Top > tBarInf.Position.Bottom;
-            
-            switch (tBarInf.Alignment)
+            var point = GetNotifyIconRectangle(notifyicon);
+
+            switch (position)
             {
-                case TaskBarAlignment.Top:
-                    left = point.X - windowwidth / 2;
-                    if (left + windowwidth > tBarInf.Position.Width)
-                        left = tBarInf.Position.Width - windowwidth;
-                    top = !flag ? tBarInf.Position.Bottom + 8 : iconRect.Bottom + 8;
+                case TaskbarPosition.Top:
+                    left = point.X - windowwidth/2;
+                    if (left > taskbar.Left + taskbar.Width - windowwidth)
+                        left = taskbar.Left + taskbar.Width - windowwidth;
+
+                    top = taskbar.Top + taskbar.Height + 8;
                     break;
 
-                case TaskBarAlignment.Left:
-                    if (!flag)
-                    {
-                        left = tBarInf.Position.Right + 8;
-                        top = point.Y - windowheight / 2;
-                    }
-                    else
-                    {
-                        left = point.X - windowwidth / 2;
-                        top = iconRect.Top - windowheight - 8;
-                    }
-                    if (top + windowheight > tBarInf.Position.Height)
-                        top = tBarInf.Position.Height - windowheight;
+                case TaskbarPosition.Left:
+                    left = taskbar.Left + taskbar.Width + 8;
+
+                    top = point.Y - windowheight / 2;
+                    if (top > taskbar.Top + taskbar.Height - windowheight)
+                        top = taskbar.Top + taskbar.Height - windowheight;
                     break;
 
-                case TaskBarAlignment.Right:
-                    if (!flag)
-                    {
-                        left = tBarInf.Position.Left - windowwidth - 8;
-                        top = point.Y - windowheight / 2;
-                    }
-                    else
-                    {
-                        left = point.X - windowwidth / 2;
-                        top = iconRect.Top - windowheight - 8;
-                    }
-                    if (top + windowheight > tBarInf.Position.Height)
-                        top = tBarInf.Position.Height - windowheight;
+                case TaskbarPosition.Right:
+                    left = taskbar.Left - windowwidth - 8;
+
+                    top = point.Y - windowheight / 2;
+                    if (top > taskbar.Top + taskbar.Height - windowheight)
+                        top = taskbar.Top + taskbar.Height - windowheight;
                     break;
 
-                default:
-                    left = point.X - windowwidth / 2;
-                    if (left + windowwidth > tBarInf.Position.Width)
-                        left = tBarInf.Position.Width - windowwidth;
-                    top = flag ? iconRect.Top - windowheight - 8 : tBarInf.Position.Top - windowheight - 8;
+                default: 
+                    left = point.X - windowwidth/2;
+                    if (left > taskbar.Left + taskbar.Width - windowwidth)
+                        left = taskbar.Left + taskbar.Width - windowwidth;
+
+                    top = taskbar.Top - windowheight - 8;
                     break;
             }
             return new Point(left, top);
