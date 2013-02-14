@@ -78,7 +78,7 @@ namespace AudioSwitch
             public int bottom;
         }
 
-        private static TaskbarPosition GetPosition(out Rectangle bounds)
+        private static TaskbarPosition GetTaskbarPosition(out Rectangle bounds)
         {
             var taskbarHandle = FindWindow("Shell_TrayWnd", null);
 
@@ -91,7 +91,7 @@ namespace AudioSwitch
             return (TaskbarPosition)data.uEdge;
         }
 
-        private static Point GetNotifyIconRectangle(IDisposable notifyicon)
+        private static Point GetNotifyIconPosition(IDisposable notifyicon)
         {
             var field = notifyicon.GetType().GetField("id", BindingFlags.NonPublic | BindingFlags.Instance);
             var num = (int) field.GetValue(notifyicon);
@@ -110,46 +110,62 @@ namespace AudioSwitch
             int left;
             int top;
             Rectangle taskbar;
-            var position = GetPosition(out taskbar);
+            var position = GetTaskbarPosition(out taskbar);
             
             if (position == TaskbarPosition.Unknown)
                 return new Point((Screen.PrimaryScreen.WorkingArea.Width + windowwidth)/2,
                                  (Screen.PrimaryScreen.WorkingArea.Height + windowheight)/2);
 
-            var point = GetNotifyIconRectangle(notifyicon);
+            var iconPos = GetNotifyIconPosition(notifyicon);
 
             switch (position)
             {
                 case TaskbarPosition.Top:
-                    left = point.X - windowwidth/2;
-                    if (left > taskbar.Left + taskbar.Width - windowwidth)
+                    if (iconPos.X - windowwidth / 2 > taskbar.Left + taskbar.Width - windowwidth)
                         left = taskbar.Left + taskbar.Width - windowwidth;
+                    else
+                        left = iconPos.X - windowwidth / 2;
 
-                    top = taskbar.Top + taskbar.Height + 8;
+                    if (iconPos.Y > taskbar.Top + taskbar.Height)
+                        top = iconPos.Y + 24;
+                    else
+                        top = taskbar.Top + taskbar.Height + 8;
                     break;
 
                 case TaskbarPosition.Left:
-                    left = taskbar.Left + taskbar.Width + 8;
+                    if (iconPos.X > taskbar.Left + taskbar.Width)
+                        left = iconPos.X + 24;
+                    else
+                        left = taskbar.Left + taskbar.Width + 8;
 
-                    top = point.Y - windowheight / 2;
-                    if (top > taskbar.Top + taskbar.Height - windowheight)
+                    if (iconPos.Y - windowheight / 2 > taskbar.Top + taskbar.Height - windowheight)
                         top = taskbar.Top + taskbar.Height - windowheight;
+                    else
+                        top = iconPos.Y - windowheight / 2;
                     break;
 
                 case TaskbarPosition.Right:
-                    left = taskbar.Left - windowwidth - 8;
+                    if (iconPos.X < taskbar.Left)
+                        left = iconPos.X - windowwidth - 24;
+                    else
+                        left = taskbar.Left - windowwidth - 8;
 
-                    top = point.Y - windowheight / 2;
-                    if (top > taskbar.Top + taskbar.Height - windowheight)
+                    if (iconPos.Y - windowheight / 2 > taskbar.Top + taskbar.Height - windowheight)
                         top = taskbar.Top + taskbar.Height - windowheight;
+                    else
+                        top = iconPos.Y - windowheight / 2;
                     break;
 
                 default: 
-                    left = point.X - windowwidth/2;
-                    if (left > taskbar.Left + taskbar.Width - windowwidth)
+                    if (iconPos.X - windowwidth / 2 > taskbar.Left + taskbar.Width - windowwidth)
                         left = taskbar.Left + taskbar.Width - windowwidth;
+                    else
+                        left = iconPos.X - windowwidth / 2;
 
-                    top = taskbar.Top - windowheight - 8;
+                    if (iconPos.Y < taskbar.Top)
+                        top = iconPos.Y - windowheight - 24;
+                    else
+                        top = taskbar.Top - windowheight - 8;
                     break;
             }
             return new Point(left, top);
