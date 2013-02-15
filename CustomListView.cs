@@ -3,9 +3,14 @@ using System.Windows.Forms;
 
 namespace AudioSwitch
 {
-    public sealed class CustomListView : ListView
+    internal sealed class CustomListView : ListView
     {
-        public event ScrollEventHandler Scroll;
+        internal event ScrollEventHandler Scroll;
+
+        internal CustomListView()
+        {
+            DoubleBuffered = true;
+        }
 
         protected override void WndProc(ref Message m)
         {
