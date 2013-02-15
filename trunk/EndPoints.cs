@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AudioSwitch.CoreAudioApi;
+using AudioSwitch.Properties;
 
 namespace AudioSwitch
 {
@@ -40,7 +42,15 @@ namespace AudioSwitch
 
         internal static void SetDefaultDevice(int devID)
         {
-            pPolicyConfig.SetDefaultEndpoint(DeviceIDs.GetByFirst(devID), ERole.eMultimedia);
+            try
+            {
+                pPolicyConfig.SetDefaultEndpoint(DeviceIDs.GetByFirst(devID), ERole.eMultimedia);
+            }
+            catch (Exception)
+            {
+                if (!Settings.Default.IgnoreErrors)
+                    throw;
+            }
         }
     }
 }

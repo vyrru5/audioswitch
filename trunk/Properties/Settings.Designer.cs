@@ -46,5 +46,14 @@ namespace AudioSwitch.Properties {
                 this["Key"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IgnoreErrors {
+            get {
+                return ((bool)(this["IgnoreErrors"]));
+            }
+        }
     }
 }
