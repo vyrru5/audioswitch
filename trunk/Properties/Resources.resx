@@ -145,7 +145,19 @@
   <data name="_66_100" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\66-100.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="appconfig" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\app.config;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="mute_highDPI" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mute_highDPI.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zero_highDPI" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zero_highDPI.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1_33_highDPI" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1-33_highDPI.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_33_66_highDPI" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\33-66_highDPI.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_66_100_highDPI" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\66-100_highDPI.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
