@@ -40,11 +40,11 @@ namespace AudioSwitch
             this.components = new System.ComponentModel.Container();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.pictureItemsBack = new System.Windows.Forms.PictureBox();
+            this.VolBar = new VolumeBar();
+            this.ledLeft = new LedBar();
+            this.ledRight = new LedBar();
+            this.listDevices = new CustomListView();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.ledRight = new AudioSwitch.LedBar();
-            this.ledLeft = new AudioSwitch.LedBar();
-            this.VolBar = new AudioSwitch.VolumeBar();
-            this.listDevices = new AudioSwitch.CustomListView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureItemsBack)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,50 +58,47 @@ namespace AudioSwitch
             // 
             // pictureItemsBack
             // 
-            this.pictureItemsBack.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pictureItemsBack.Location = new System.Drawing.Point(0, 191);
+            this.pictureItemsBack.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left);
+            this.pictureItemsBack.Location = new System.Drawing.Point(0, 190);
             this.pictureItemsBack.Name = "pictureItemsBack";
-            this.pictureItemsBack.Size = new System.Drawing.Size(223, 44);
+            this.pictureItemsBack.Size = new System.Drawing.Size(221, 43);
             this.pictureItemsBack.TabIndex = 2;
             this.pictureItemsBack.TabStop = false;
             this.pictureItemsBack.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             // 
-            // timer1
+            // VolBar
             // 
-            this.timer1.Interval = 1;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // ledRight
-            // 
-            this.ledRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ledRight.BackColor = System.Drawing.SystemColors.Control;
-            this.ledRight.Location = new System.Drawing.Point(13, 219);
-            this.ledRight.Name = "ledRight";
-            this.ledRight.Size = new System.Drawing.Size(194, 4);
-            this.ledRight.TabIndex = 9;
-            this.ledRight.TabStop = false;
+            this.VolBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.VolBar.Location = new System.Drawing.Point(13, 209);
+            this.VolBar.Name = "VolBar";
+            this.VolBar.Size = new System.Drawing.Size(195, 9);
+            this.VolBar.TabIndex = 7;
+            this.VolBar.TabStop = false;
             // 
             // ledLeft
             // 
             this.ledLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ledLeft.BackColor = System.Drawing.SystemColors.Control;
-            this.ledLeft.Location = new System.Drawing.Point(13, 202);
+            this.ledLeft.Location = new System.Drawing.Point(13, 203);
             this.ledLeft.Name = "ledLeft";
-            this.ledLeft.Size = new System.Drawing.Size(194, 4);
+            this.ledLeft.Size = new System.Drawing.Size(197, 4);
             this.ledLeft.TabIndex = 8;
             this.ledLeft.TabStop = false;
             // 
-            // VolBar
+            // ledRight
             // 
-            this.VolBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.VolBar.Location = new System.Drawing.Point(13, 208);
-            this.VolBar.Name = "VolBar";
-            this.VolBar.Size = new System.Drawing.Size(194, 9);
-            this.VolBar.TabIndex = 7;
-            this.VolBar.TabStop = false;
+            this.ledRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ledRight.BackColor = System.Drawing.SystemColors.Control;
+            this.ledRight.Location = new System.Drawing.Point(13, 220);
+            this.ledRight.Name = "ledRight";
+            this.ledRight.Size = new System.Drawing.Size(197, 4);
+            this.ledRight.TabIndex = 9;
+            this.ledRight.TabStop = false;
             // 
             // listDevices
             // 
+            this.listDevices.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listDevices.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listDevices.FullRowSelect = true;
             this.listDevices.HideSelection = false;
@@ -116,8 +113,15 @@ namespace AudioSwitch
             this.listDevices.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listDevices_KeyDown);
             this.listDevices.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listDevices_KeyUp);
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 1;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // FormSwitcher
             // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(220, 234);
             this.ControlBox = false;
             this.Controls.Add(this.ledRight);

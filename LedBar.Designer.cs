@@ -149,8 +149,7 @@
             // 
             // LedBar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(this.led13);
             this.Controls.Add(this.led12);
@@ -166,7 +165,7 @@
             this.Controls.Add(this.led2);
             this.Controls.Add(this.led1);
             this.Name = "LedBar";
-            this.Size = new System.Drawing.Size(194, 4);
+            this.Size = new System.Drawing.Size(197, 4);
             this.ResumeLayout(false);
 
         }

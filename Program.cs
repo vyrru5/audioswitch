@@ -1,9 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AudioSwitch.CoreAudioApi;
-using AudioSwitch.Properties;
 
 namespace AudioSwitch
 {
@@ -23,10 +21,6 @@ namespace AudioSwitch
         [STAThread]
         private static void Main(string[] args)
         {
-            const string confName = "AudioSwitch.exe.config";
-            if (!File.Exists(confName))
-                File.WriteAllBytes(confName, Resources.appconfig);
-
             if (args.Length > 0)
             {
                 var cmdArgsJoined = string.Join(" ", args);

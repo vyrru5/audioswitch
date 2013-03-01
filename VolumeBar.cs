@@ -27,8 +27,8 @@ namespace AudioSwitch
             set
             {
                 _mute = value;
-                Thumb.Image.Dispose();
-                Thumb.Image = value ? Resources.ThumbMute : Resources.ThumbNormal;
+                Thumb.BackgroundImage.Dispose();
+                Thumb.BackgroundImage = value ? Resources.ThumbMute : Resources.ThumbNormal;
                 if (VolumeMuteChanged != null)
                     VolumeMuteChanged(this, null);
             }
@@ -169,15 +169,15 @@ namespace AudioSwitch
         private void Thumb_MouseEnter(object sender, EventArgs e)
         {
             if (_mute) return;
-            Thumb.Image.Dispose();
-            Thumb.Image = Resources.ThumbHover;
+            Thumb.BackgroundImage.Dispose();
+            Thumb.BackgroundImage = Resources.ThumbHover;
         }
 
         private void Thumb_MouseLeave(object sender, EventArgs e)
         {
             if (_mute) return;
-            Thumb.Image.Dispose();
-            Thumb.Image = Resources.ThumbNormal;
+            Thumb.BackgroundImage.Dispose();
+            Thumb.BackgroundImage = Resources.ThumbNormal;
         }
 
         internal void DoScroll(object sender, ScrollEventArgs e)

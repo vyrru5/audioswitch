@@ -52,7 +52,8 @@ namespace AudioSwitch
             // Thumb
             // 
             this.Thumb.BackColor = System.Drawing.Color.Transparent;
-            this.Thumb.Image = global::AudioSwitch.Properties.Resources.ThumbNormal;
+            this.Thumb.BackgroundImage = global::AudioSwitch.Properties.Resources.ThumbNormal;
+            this.Thumb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Thumb.Location = new System.Drawing.Point(0, 0);
             this.Thumb.Name = "Thumb";
             this.Thumb.Size = new System.Drawing.Size(31, 9);
@@ -67,10 +68,11 @@ namespace AudioSwitch
             // 
             // VolumeBar
             // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.Controls.Add(this.Thumb);
             this.Controls.Add(this.lblGraph);
             this.Name = "VolumeBar";
-            this.Size = new System.Drawing.Size(194, 9);
+            this.Size = new System.Drawing.Size(195, 9);
             ((System.ComponentModel.ISupportInitialize)(this.Thumb)).EndInit();
             this.ResumeLayout(false);
 

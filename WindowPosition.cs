@@ -107,8 +107,6 @@ namespace AudioSwitch
 
         public static Point GetWindowPosition(NotifyIcon notifyicon, int windowwidth, int windowheight)
         {
-            int left;
-            int top;
             Rectangle taskbar;
             var position = GetTaskbarPosition(out taskbar);
             
@@ -118,54 +116,61 @@ namespace AudioSwitch
 
             var iconPos = GetNotifyIconPosition(notifyicon);
 
+            var windowOffset = (int)Math.Round(8 * FormSwitcher.DpiFactor);
+            var iconOffset = (int)Math.Round(8 * FormSwitcher.DpiFactor);
+            var maxLeft = taskbar.Left + taskbar.Width - windowwidth - windowOffset;
+            var maxTop = taskbar.Top + taskbar.Height - windowheight + windowOffset;
+            int left;
+            int top;
+
             switch (position)
             {
                 case TaskbarPosition.Top:
-                    if (iconPos.X - windowwidth / 2 > taskbar.Left + taskbar.Width - windowwidth)
-                        left = taskbar.Left + taskbar.Width - windowwidth;
+                    if (iconPos.X - windowwidth/2 > maxLeft)
+                        left = maxLeft;
                     else
-                        left = iconPos.X - windowwidth / 2;
+                        left = iconPos.X - windowwidth/2;
 
                     if (iconPos.Y > taskbar.Top + taskbar.Height)
-                        top = iconPos.Y + 24;
+                        top = iconPos.Y + iconOffset;
                     else
-                        top = taskbar.Top + taskbar.Height + 8;
+                        top = taskbar.Top + taskbar.Height + windowOffset;
                     break;
 
                 case TaskbarPosition.Left:
                     if (iconPos.X > taskbar.Left + taskbar.Width)
-                        left = iconPos.X + 24;
+                        left = iconPos.X + iconOffset;
                     else
-                        left = taskbar.Left + taskbar.Width + 8;
+                        left = taskbar.Left + taskbar.Width + windowOffset;
 
-                    if (iconPos.Y - windowheight / 2 > taskbar.Top + taskbar.Height - windowheight)
-                        top = taskbar.Top + taskbar.Height - windowheight;
+                    if (iconPos.Y - windowheight/2 > maxTop)
+                        top = maxTop;
                     else
-                        top = iconPos.Y - windowheight / 2;
+                        top = iconPos.Y - windowheight/2;
                     break;
 
                 case TaskbarPosition.Right:
                     if (iconPos.X < taskbar.Left)
-                        left = iconPos.X - windowwidth - 24;
+                        left = iconPos.X - windowwidth - iconOffset;
                     else
-                        left = taskbar.Left - windowwidth - 8;
+                        left = taskbar.Left - windowwidth - windowOffset;
 
-                    if (iconPos.Y - windowheight / 2 > taskbar.Top + taskbar.Height - windowheight)
-                        top = taskbar.Top + taskbar.Height - windowheight;
+                    if (iconPos.Y - windowheight / 2 > maxTop)
+                        top = maxTop;
                     else
                         top = iconPos.Y - windowheight / 2;
                     break;
 
-                default: 
-                    if (iconPos.X - windowwidth / 2 > taskbar.Left + taskbar.Width - windowwidth)
-                        left = taskbar.Left + taskbar.Width - windowwidth;
+                default:
+                    if (iconPos.X - windowwidth / 2 > maxLeft)
+                        left = maxLeft;
                     else
                         left = iconPos.X - windowwidth / 2;
 
                     if (iconPos.Y < taskbar.Top)
-                        top = iconPos.Y - windowheight - 24;
+                        top = iconPos.Y - windowheight - iconOffset;
                     else
-                        top = taskbar.Top - windowheight - 8;
+                        top = taskbar.Top - windowheight - windowOffset;
                     break;
             }
             return new Point(left, top);

@@ -11,23 +11,29 @@ namespace AudioSwitch
         [DllImport("Shell32.dll")]
         private static extern int ExtractIconEx(string libName, int iconIndex, IntPtr[] largeIcon, IntPtr[] smallIcon, int nIcons);
 
-        internal static readonly ImageList ActiveIcons = new ImageList
-        {
-            ImageSize = new Size(32, 32),
-            ColorDepth = ColorDepth.Depth32Bit
-        };
+        internal static ImageList ActiveIcons;
+        internal static ImageList NormalIcons;
+        internal static ImageList DefaultIcons;
 
-        internal static readonly ImageList NormalIcons = new ImageList
+        internal static void InitImageLists(float dpifactor)
         {
-            ImageSize = new Size(32, 32),
-            ColorDepth = ColorDepth.Depth32Bit
-        };
-
-        internal static readonly ImageList DefaultIcons = new ImageList
-        {
-            ImageSize = new Size(32, 32),
-            ColorDepth = ColorDepth.Depth32Bit
-        };
+            var size = new Size((int)(32 * dpifactor), (int)(32 * dpifactor));
+            ActiveIcons = new ImageList
+            {
+                ImageSize = size,
+                ColorDepth = ColorDepth.Depth32Bit
+            };
+            NormalIcons = new ImageList
+            {
+                ImageSize = size,
+                ColorDepth = ColorDepth.Depth32Bit
+            };
+            DefaultIcons = new ImageList
+            {
+                ImageSize = size,
+                ColorDepth = ColorDepth.Depth32Bit
+            };
+        }
 
         internal static void Add(string iconPath)
         {
@@ -58,7 +64,7 @@ namespace AudioSwitch
                 using (var canvas = Graphics.FromImage(bitmap))
                 {
                     canvas.DrawImage(original, 0, 0);
-                    canvas.DrawImage(overlay, 0, 0);
+                    canvas.DrawImage(overlay, 0, 0, original.Width, original.Height);
                     canvas.Save();
                     return bitmap;
                 }

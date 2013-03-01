@@ -229,6 +229,8 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Resources\mute_highDPI.png" />
+    <None Include="Resources\zero_highDPI.png" />
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -238,6 +240,9 @@
     <None Include="Resources\1-33.png" />
     <None Include="Resources\33-66.png" />
     <None Include="Resources\66-100.png" />
+    <None Include="Resources\1-33_highDPI.png" />
+    <None Include="Resources\33-66_highDPI.png" />
+    <None Include="Resources\66-100_highDPI.png" />
     <Content Include="Resources\appicon.ico" />
     <None Include="Resources\mute.png" />
     <None Include="Resources\defaultDevice.png" />
