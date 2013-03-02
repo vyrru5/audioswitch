@@ -17,7 +17,6 @@ namespace AudioSwitch
         private static int CurrentDevice;
         private static EDataFlow RenderType = EDataFlow.eRender;
         internal static float DpiFactor;
-        private static bool alreadyVisible;
 
         protected override void WndProc(ref Message m)
         {
@@ -132,9 +131,6 @@ namespace AudioSwitch
             {
                 notifyIcon.Text = "No audio devices found";
             }
-
-            if (!alreadyVisible)
-                alreadyVisible = Visible;
         }
 
         private void notifyIcon1_MouseDown(object sender, MouseEventArgs e)
@@ -169,24 +165,21 @@ namespace AudioSwitch
             }
             
             RefreshDevices(true);
+
+            if (e.Button == MouseButtons.Left)
+                SetSizes();
         }
 
         private void notifyIcon1_MouseUp(object sender, MouseEventArgs e)
         {
             if (ModifierKeys.HasFlag(Keys.Alt))
                 return;
-            if (alreadyVisible)
-            {
-                alreadyVisible = false;
-                return;
-            }
 
             switch (e.Button)
             {
                 case MouseButtons.Left:
                     if (!Program.stfu)
                     {
-                        SetSizes();
                         timer1.Enabled = true;
                         Show();
                         Activate();
