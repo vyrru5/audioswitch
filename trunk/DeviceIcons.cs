@@ -40,9 +40,17 @@ namespace AudioSwitch
             var path = Environment.ExpandEnvironmentVariables(iconPath);
             var iconAdr = path.Split(',');
 
-            var hIconEx = new IntPtr[1];
-            ExtractIconEx(iconAdr[0], int.Parse(iconAdr[1]), hIconEx, null, 1);
-            var icon = Icon.FromHandle(hIconEx[0]);
+            Icon icon;
+            if (iconAdr.Length > 1)
+            {
+                var hIconEx = new IntPtr[1];
+                ExtractIconEx(iconAdr[0], int.Parse(iconAdr[1]), hIconEx, null, 1);
+                icon = Icon.FromHandle(hIconEx[0]);
+            }
+            else
+            {
+                icon = new Icon(iconAdr[0], NormalIcons.ImageSize.Width, NormalIcons.ImageSize.Height);
+            }
 
             NormalIcons.Images.Add(icon);
             ActiveIcons.Images.Add(icon);
